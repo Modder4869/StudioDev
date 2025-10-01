@@ -43,6 +43,7 @@ namespace AssetStudio
             var sliceStats = new ConcurrentBag<(int fileCount, int assetCount, int collisions)>();
 
             double lastElapsed = 0;
+            AssetsHelper.BaseFolder = baseFolder;
             Parallel.ForEach(
                 slices,
                 new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
@@ -131,7 +132,7 @@ namespace AssetStudio
             var bag = new ConcurrentBag<AssetEntry>();
             var fileStats = new ConcurrentBag<(string file, int assetCount, int collisions)>();
             //var fileTimings = new ConcurrentBag<(string fileName, double elapsedSeconds)>();
-
+            AssetsHelper.BaseFolder = baseFolder;
             double lastElapsed = 0;
             Parallel.ForEach(
                 files,

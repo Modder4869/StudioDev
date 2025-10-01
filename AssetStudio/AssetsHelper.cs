@@ -24,7 +24,7 @@ namespace AssetStudio
         public static bool Minimal = true;
         public static CancellationTokenSource tokenSource = new CancellationTokenSource();
 
-        private static string BaseFolder = "";
+        public static string BaseFolder = "";
         private static Dictionary<string, Entry> CABMap = new Dictionary<string, Entry>(StringComparer.OrdinalIgnoreCase);
         private static Dictionary<string, HashSet<long>> Offsets = new Dictionary<string, HashSet<long>>();
         private static AssetsManager assetsManager = new AssetsManager() { Silent = true, SkipProcess = true, ResolveDependencies = false };
