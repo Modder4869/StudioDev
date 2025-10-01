@@ -171,7 +171,7 @@ namespace AssetStudio
         }
         public static string[] ProcessExtraFiles(string[] files)
         {
-            if (File.Exists("additional_files.txt") && true)
+            if (File.Exists("additional_files.txt") && forceLoad)
             {
                 string[] lines = File.ReadAllLines("additional_files.txt");
                 lines = (from f in lines.Distinct()
