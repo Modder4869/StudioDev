@@ -22,9 +22,8 @@ namespace AssetStudio
         }
         private static void Decrypt(Span<byte> bytes)
         {
-            if(Logger.Flags.HasFlag(LoggerEvent.Verbose)){
-			Logger.Verbose($"Attempting to decrypt block with NetEase encryption...");
-			}
+
+            Logger.Verbose($"Attempting to decrypt block with NetEase encryption...");
 
             var encryptedInts = MemoryMarshal.Cast<byte, int>(bytes);
 
@@ -140,9 +139,8 @@ namespace AssetStudio
                 throw new Exception("Unsupported version");
             }
             var versionString = version.ToString("X4");
-            if(Logger.Flags.HasFlag(LoggerEvent.Verbose)){
-			Logger.Verbose($"Bundle version: {versionString}");
-			}
+
+            Logger.Verbose($"Bundle version: {versionString}");
             Encoding.UTF8.GetBytes(versionString, bytes);
         }
 
@@ -177,7 +175,7 @@ namespace AssetStudio
             static CRC()
             {
                 Table = new uint[256];
-                const uint kPoly = 0x9823D6E; 
+                const uint kPoly = 0x9823D6E;
                 for (uint i = 0; i < 256; i++)
                 {
                     uint r = i;

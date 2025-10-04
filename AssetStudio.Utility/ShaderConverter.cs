@@ -1,6 +1,5 @@
 ﻿using AssetStudio.PInvoke;
 using SharpGen.Runtime;
-using SpirV;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -1096,12 +1095,10 @@ namespace AssetStudio
                             }
                             catch (Exception e)
                             {
-                                if(Logger.Flags.HasFlag(LoggerEvent.Verbose)){
-			Logger.Verbose($"Decompile error {e.Message}");
-			}
-                                if(Logger.Flags.HasFlag(LoggerEvent.Verbose)){
-			Logger.Verbose($"Attempting to disassemble...");
-			}
+
+                                Logger.Verbose($"Decompile error {e.Message}");
+
+                                Logger.Verbose($"Attempting to disassemble...");
 
                                 try
                                 {

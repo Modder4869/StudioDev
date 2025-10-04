@@ -1,42 +1,42 @@
 ﻿namespace AssetStudio
 {
-	public sealed class YAMLDocument
-	{
-		public YAMLDocument()
-		{
-		}
+    public sealed class YAMLDocument
+    {
+        public YAMLDocument()
+        {
+        }
 
-		public YAMLScalarNode CreateScalarRoot()
-		{
-			YAMLScalarNode root = new YAMLScalarNode();
-			Root = root;
-			return root;
-		}
+        public YAMLScalarNode CreateScalarRoot()
+        {
+            YAMLScalarNode root = new YAMLScalarNode();
+            Root = root;
+            return root;
+        }
 
-		public YAMLSequenceNode CreateSequenceRoot()
-		{
-			YAMLSequenceNode root = new YAMLSequenceNode();
-			Root = root;
-			return root;
-		}
+        public YAMLSequenceNode CreateSequenceRoot()
+        {
+            YAMLSequenceNode root = new YAMLSequenceNode();
+            Root = root;
+            return root;
+        }
 
-		public YAMLMappingNode CreateMappingRoot()
-		{
-			YAMLMappingNode root = new YAMLMappingNode();
-			Root = root;
-			return root;
-		}
-		
-		internal void Emit(Emitter emitter, bool isSeparator)
-		{
-			if(isSeparator)
-			{
-				emitter.Write("---").WriteWhitespace();
-			}
+        public YAMLMappingNode CreateMappingRoot()
+        {
+            YAMLMappingNode root = new YAMLMappingNode();
+            Root = root;
+            return root;
+        }
 
-			Root.Emit(emitter);
-		}
+        internal void Emit(Emitter emitter, bool isSeparator)
+        {
+            if (isSeparator)
+            {
+                emitter.Write("---").WriteWhitespace();
+            }
 
-		public YAMLNode Root { get; private set; }
-	}
+            Root.Emit(emitter);
+        }
+
+        public YAMLNode Root { get; private set; }
+    }
 }

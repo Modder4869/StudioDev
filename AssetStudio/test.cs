@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -97,7 +96,7 @@ namespace AssetStudio
                 sliceIndex++;
             }
             AssetsHelper.UpdateContainers(finalAssets, game);
-            AssetsHelper.DumpCABMap(mapName,AssetsHelperParallel.CABMap);
+            AssetsHelper.DumpCABMap(mapName, AssetsHelperParallel.CABMap);
 
             Logger.Info($"Map built successfully! {totalCollisions} collisions found");
 

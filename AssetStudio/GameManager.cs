@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using static AssetStudio.Crypto;
 
 namespace AssetStudio
@@ -91,7 +91,7 @@ namespace AssetStudio
             Name = type.ToString();
             Type = type;
         }
-        public Game(GameType type,string ext)
+        public Game(GameType type, string ext)
         {
             Name = type.ToString();
             Type = type;
@@ -238,7 +238,7 @@ namespace AssetStudio
         public static bool isThreeKingdoms(this GameType type) => type == GameType.ThreeKingdoms;
         public static bool isBLR3(this GameType type) => type == GameType.BLR3;
         public static bool isMetallopus(this GameType type) => type == GameType.Metallopus;
-        public static bool isEOS (this GameType type) => type == GameType.EOS;
+        public static bool isEOS(this GameType type) => type == GameType.EOS;
 
         public static bool IsGIGroup(this GameType type) => type switch
         {

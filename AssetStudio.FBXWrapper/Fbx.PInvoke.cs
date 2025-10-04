@@ -1,5 +1,5 @@
-﻿using System.Runtime.InteropServices;
-using AssetStudio.FbxInterop;
+﻿using AssetStudio.FbxInterop;
+using System.Runtime.InteropServices;
 
 namespace AssetStudio
 {

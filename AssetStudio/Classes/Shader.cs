@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace AssetStudio
@@ -608,7 +607,7 @@ namespace AssetStudio
         public SerializedSubProgram(ObjectReader reader)
         {
             var version = reader.version;
-            
+
             if (reader.Game.Type.IsLoveAndDeepspace())
             {
                 var m_CodeHash = new Hash128(reader);

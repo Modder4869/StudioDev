@@ -1,8 +1,8 @@
 namespace AssetStudio
 {
-	internal enum MetaType
-	{
-		YAML,
-		TAG,
-	}
+    internal enum MetaType
+    {
+        YAML,
+        TAG,
+    }
 }

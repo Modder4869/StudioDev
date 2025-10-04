@@ -1,9 +1,8 @@
-﻿using System.IO;
+﻿using SevenZip;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.Collections.Generic;
-using SevenZip;
-using System;
 
 namespace AssetStudio
 {
@@ -233,7 +232,7 @@ namespace AssetStudio
             }
             return false;
         }
-        
+
         private static Dictionary<uint, string> BuildTOS(this Animator animator)
         {
             if (animator.version[0] > 4 || (animator.version[0] == 4 && animator.version[1] >= 3))
@@ -283,7 +282,7 @@ namespace AssetStudio
             }
         }
 
-        
+
         private static bool IsContainsAnimationClip(this RuntimeAnimatorController runtimeAnimatorController, AnimationClip clip)
         {
             if (runtimeAnimatorController is AnimatorController animatorController)

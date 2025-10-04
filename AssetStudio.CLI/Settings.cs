@@ -2,7 +2,8 @@
 using System.ComponentModel;
 using System.Configuration;
 
-namespace AssetStudio.CLI.Properties {
+namespace AssetStudio.CLI.Properties
+{
     public static class AppSettings
     {
         public static string Get(string key)
@@ -16,7 +17,7 @@ namespace AssetStudio.CLI.Properties {
             {
                 var value = Get(key);
 
-                if (string.IsNullOrEmpty(value)) 
+                if (string.IsNullOrEmpty(value))
                     return defaultValue;
 
                 return (TValue)TypeDescriptor.GetConverter(typeof(TValue)).ConvertFromInvariantString(value);
@@ -26,7 +27,7 @@ namespace AssetStudio.CLI.Properties {
                 Console.WriteLine($"Invalid value at \"{key}\", switching to default value [{defaultValue}] !!");
                 return defaultValue;
             }
-            
+
         }
     }
 

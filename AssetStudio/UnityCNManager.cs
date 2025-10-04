@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace AssetStudio
 {
@@ -58,7 +58,7 @@ namespace AssetStudio
 
                 key = Entries[index];
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Logger.Error($"[UnityCN] Invalid Index, check if list is not empty !!\n{e.Message}");
                 key = null;

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.IO;
 using System.Text;
 
 namespace AssetStudio
@@ -186,9 +185,8 @@ namespace AssetStudio
         {
             var m_Node = m_Nodes[i];
             var varTypeStr = m_Node.m_Type;
-            if(Logger.Flags.HasFlag(LoggerEvent.Verbose)){
-			Logger.Verbose($"Reading {m_Node.m_Name} of type {varTypeStr}");
-			}
+
+            Logger.Verbose($"Reading {m_Node.m_Name} of type {varTypeStr}");
             object value;
             var align = (m_Node.m_MetaFlag & 0x4000) != 0;
             switch (varTypeStr)

@@ -1,11 +1,11 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
+using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Binding;
 using System.CommandLine.Parsing;
+using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
-using System.Collections.Generic;
 
 namespace AssetStudio.CLI
 {
@@ -94,7 +94,7 @@ namespace AssetStudio.CLI
             Silent = new Option<bool>("--silent", "Hide log messages.");
             LoggerFlags = new Option<LoggerEvent[]>("--logger_flags", "Flags to control toggle log events.") { AllowMultipleArgumentsPerToken = true, ArgumentHelpName = "Verbose|Debug|Info|etc.." };
             TypeFilter = new Option<string[]>("--types", "Specify unity class type(s)") { AllowMultipleArgumentsPerToken = true, ArgumentHelpName = "Texture2D|Shader:Parse|Sprite:Both|etc.." };
-            NameFilter = new Option<Regex[]>("--names", result => 
+            NameFilter = new Option<Regex[]>("--names", result =>
             {
                 var items = new List<Regex>();
                 var value = result.Tokens.Single().Value;
@@ -124,7 +124,8 @@ namespace AssetStudio.CLI
                 }
 
                 return items.ToArray();
-            }, false, "Specify name regex filter(s).") { AllowMultipleArgumentsPerToken = true };
+            }, false, "Specify name regex filter(s).")
+            { AllowMultipleArgumentsPerToken = true };
             ContainerFilter = new Option<Regex[]>("--containers", result =>
             {
                 var items = new List<Regex>();
@@ -132,7 +133,7 @@ namespace AssetStudio.CLI
                 if (File.Exists(value))
                 {
                     var lines = File.ReadLines(value);
-                    foreach(var line in lines)
+                    foreach (var line in lines)
                     {
                         if (string.IsNullOrWhiteSpace(line))
                         {
@@ -155,7 +156,8 @@ namespace AssetStudio.CLI
                 }
 
                 return items.ToArray();
-            }, false, "Specify container regex filter(s).") { AllowMultipleArgumentsPerToken = true };
+            }, false, "Specify container regex filter(s).")
+            { AllowMultipleArgumentsPerToken = true };
             GameName = new Option<string>("--game", $"Specify Game.") { IsRequired = true };
             KeyIndex = new Option<int>("--key_index", "Specify key index.") { ArgumentHelpName = UnityCNManager.ToString() };
             MapOp = new Option<MapOpType>("--map_op", "Specify which map to build.");
@@ -200,7 +202,7 @@ namespace AssetStudio.CLI
             MapType.SetDefaultValue(ExportListType.XML);
             KeyIndex.SetDefaultValue(0);
         }
-        
+
         public byte ParseKey(string value)
         {
             if (value.StartsWith("0x"))

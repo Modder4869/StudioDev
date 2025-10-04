@@ -1,9 +1,6 @@
-﻿using AssetStudio;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Metrics;
 using System.Linq;
-using System.Text;
 
 namespace AssetStudio
 {
@@ -64,7 +61,7 @@ namespace AssetStudio
 
                 return meshes.Any(x => x == true);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Logger.Warning($"Unable to verify if {m_Transform?.Name} has meshes, skipping...");
                 return false;

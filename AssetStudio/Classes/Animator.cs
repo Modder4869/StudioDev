@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace AssetStudio
+﻿namespace AssetStudio
 {
     public sealed class Animator : Behaviour
     {
@@ -27,7 +22,7 @@ namespace AssetStudio
             {
                 var m_UpdateMode = reader.ReadInt32();
             }
-            
+
             if (reader.Game.Type.IsSR())
             {
                 var m_MotionSkeletonMode = reader.ReadInt32();

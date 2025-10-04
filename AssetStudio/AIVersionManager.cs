@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Net.Http;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace AssetStudio
 {
@@ -19,11 +19,11 @@ namespace AssetStudio
 
         private static readonly string BaseAIFolder = Path.Combine(Environment.CurrentDirectory, "AI");
         private static readonly string VersionsPath = Path.Combine(BaseAIFolder, "versions.json");
-        
+
         private static readonly HttpClient Client;
 
         private static Dictionary<string, VersionIndex> Versions;
-        
+
         static AIVersionManager()
         {
             Client = new HttpClient();

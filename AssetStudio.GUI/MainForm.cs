@@ -1,6 +1,7 @@
 ﻿
 using Newtonsoft.Json;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,15 +12,11 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows.Forms;
 using static AssetStudio.GUI.Studio;
-using OpenTK.Graphics;
-using OpenTK.Mathematics;
-using System.Text.RegularExpressions;
-using OpenTK.Audio.OpenAL;
 
 namespace AssetStudio.GUI
 {
@@ -478,11 +475,11 @@ namespace AssetStudio.GUI
         }
         private void partialLoad_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.partialLoad= partialLoad.Checked;
+            Properties.Settings.Default.partialLoad = partialLoad.Checked;
             Properties.Settings.Default.Save();
             AssetStudio.AssetsHelper.paritial = partialLoad.Checked;
         }
-        
+
         private void enablePreview_Check(object sender, EventArgs e)
         {
             if (lastSelectedItem != null)
@@ -598,7 +595,7 @@ namespace AssetStudio.GUI
             if (e.KeyCode == Keys.Enter)
             {
                 e.SuppressKeyPress = true;
-                var textBox = sender as ToolStripTextBox; 
+                var textBox = sender as ToolStripTextBox;
                 string ext = textBox?.Text.Trim();
 
                 if (string.IsNullOrEmpty(ext))
@@ -611,7 +608,7 @@ namespace AssetStudio.GUI
                     ext = "." + ext;
 
                 Logger.Info($"Extension set to: {ext}");
-                Studio.Game.Ext = "*"+ext;
+                Studio.Game.Ext = "*" + ext;
             }
         }
 
@@ -1506,7 +1503,7 @@ namespace AssetStudio.GUI
         {
             if (InvokeRequired)
             {
-                
+
                 var result = BeginInvoke(new Action(() => { progressBar1.Value = value; }));
                 result.AsyncWaitHandle.WaitOne();
             }
@@ -1921,33 +1918,33 @@ namespace AssetStudio.GUI
                 string pattern = listSearch.Text.Substring(1);
                 var pathIdRegex = new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-          //      if (assetsManager.PathIDsByObjectCache == null)
-          //      {
-          //          var dumpPathIDRegex = new Regex(@"_PathID\s*=\s*(-?\d+)", RegexOptions.Compiled);
-          //          assetsManager.PathIDsByObjectCache = assetsManager.assetsFileList
-          //.SelectMany(file => file.ObjectsDic.Values)
-          //.Where(obj => obj.type.CanParse())
-          //.Select(obj =>
-          //{
-          //    try
-          //    {
-          //        var ids = dumpPathIDRegex.Matches(obj.Dump())
-          //            .Cast<Match>()
-          //            .Select(m => long.Parse(m.Groups[1].Value))
-          //            .ToList();
+                //      if (assetsManager.PathIDsByObjectCache == null)
+                //      {
+                //          var dumpPathIDRegex = new Regex(@"_PathID\s*=\s*(-?\d+)", RegexOptions.Compiled);
+                //          assetsManager.PathIDsByObjectCache = assetsManager.assetsFileList
+                //.SelectMany(file => file.ObjectsDic.Values)
+                //.Where(obj => obj.type.CanParse())
+                //.Select(obj =>
+                //{
+                //    try
+                //    {
+                //        var ids = dumpPathIDRegex.Matches(obj.Dump())
+                //            .Cast<Match>()
+                //            .Select(m => long.Parse(m.Groups[1].Value))
+                //            .ToList();
 
-          //        return new { obj, ids };
-          //    }
-          //    catch
-          //    {
-          //        Logger.Info($"FAILED pathid lookup (disable type parse) {obj.Name} {obj.m_PathID} {obj.type}");
-          //        return null; // Skip this object
-          //    }
-          //})
-          //.Where(x => x != null && x.ids.Count > 0)
-          //.ToDictionary(x => x.obj, x => x.ids);
+                //        return new { obj, ids };
+                //    }
+                //    catch
+                //    {
+                //        Logger.Info($"FAILED pathid lookup (disable type parse) {obj.Name} {obj.m_PathID} {obj.type}");
+                //        return null; // Skip this object
+                //    }
+                //})
+                //.Where(x => x != null && x.ids.Count > 0)
+                //.ToDictionary(x => x.obj, x => x.ids);
 
-          //      }
+                //      }
 
                 var pathIDsByObject = assetsManager.PathIdToPptrs;
                 var matchingObjects = pathIDsByObject
@@ -1989,7 +1986,7 @@ RegexOptions.Compiled
               catch
               {
                   Logger.Info($"FAILED pathid lookup (disable type parse) {obj.Name} {obj.m_PathID} {obj.type}");
-                  return null; 
+                  return null;
               }
           })
           .Where(x => x != null && x.ids.Count > 0)
@@ -2008,7 +2005,7 @@ RegexOptions.Compiled
                     .Where(x => matchingPathIDs.Contains(x.m_PathID))
                     .ToList();
             }
-            
+
 
             if (!string.IsNullOrWhiteSpace(listSearch.Text) && !listSearch.Text.StartsWith("#") && !listSearch.Text.StartsWith("!"))
             {

@@ -1,9 +1,9 @@
 ﻿using Org.Brotli.Dec;
+using SevenZip;
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -11,7 +11,6 @@ using System.Security.Cryptography;
 using System.Text;
 using static AssetStudio.BundleFile;
 using static AssetStudio.Crypto;
-using SevenZip;
 
 namespace AssetStudio
 {
@@ -19,15 +18,11 @@ namespace AssetStudio
     {
         public static void MergeSplitAssets(string path, bool allDirectories = false)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Processing split assets (.splitX) prior to loading files...");
-            }
+
+            Logger.Verbose($"Processing split assets (.splitX) prior to loading files...");
             var splitFiles = Directory.GetFiles(path, "*.split0", allDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Found {splitFiles.Length} split files, attempting to merge...");
-            }
+
+            Logger.Verbose($"Found {splitFiles.Length} split files, attempting to merge...");
             foreach (var splitFile in splitFiles)
             {
                 var destFile = Path.GetFileNameWithoutExtension(splitFile);
@@ -36,10 +31,8 @@ namespace AssetStudio
                 if (!File.Exists(destFull))
                 {
                     var splitParts = Directory.GetFiles(destPath, destFile + ".split*");
-                    if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                    {
-                        Logger.Verbose($"Creating {destFull} where split files will be combined");
-                    }
+
+                    Logger.Verbose($"Creating {destFull} where split files will be combined");
                     using (var destStream = File.Create(destFull))
                     {
                         for (int i = 0; i < splitParts.Length; i++)
@@ -48,10 +41,8 @@ namespace AssetStudio
                             using (var sourceStream = File.OpenRead(splitPart))
                             {
                                 sourceStream.CopyTo(destStream);
-                                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                                {
-                                    Logger.Verbose($"{splitPart} has been combined into {destFull}");
-                                }
+
+                                Logger.Verbose($"{splitPart} has been combined into {destFull}");
                             }
                         }
                     }
@@ -61,14 +52,12 @@ namespace AssetStudio
 
         public static string[] ProcessingSplitFiles(List<string> selectFile)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose("Filter out paths that has .split and has the same name");
-            }
+
+            Logger.Verbose("Filter out paths that has .split and has the same name");
             var splitFiles = selectFile.Where(x => x.Contains(".split"))
-                .Select(x => Path.Combine(Path.GetDirectoryName(x), Path.GetFileNameWithoutExtension(x)))
-                .Distinct()
-                .ToList();
+    .Select(x => Path.Combine(Path.GetDirectoryName(x), Path.GetFileNameWithoutExtension(x)))
+    .Distinct()
+    .ToList();
             selectFile.RemoveAll(x => x.Contains(".split"));
             foreach (var file in splitFiles)
             {
@@ -82,10 +71,8 @@ namespace AssetStudio
 
         public static FileReader DecompressGZip(FileReader reader)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Decompressing GZip file {reader.FileName} into memory");
-            }
+
+            Logger.Verbose($"Decompressing GZip file {reader.FileName} into memory");
             using (reader)
             {
                 var stream = new MemoryStream();
@@ -100,10 +87,8 @@ namespace AssetStudio
 
         public static FileReader DecompressBrotli(FileReader reader)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Decompressing Brotli file {reader.FileName} into memory");
-            }
+
+            Logger.Verbose($"Decompressing Brotli file {reader.FileName} into memory");
             using (reader)
             {
                 var stream = new MemoryStream();
@@ -118,10 +103,8 @@ namespace AssetStudio
 
         public static FileReader DecryptPack(FileReader reader, Game game)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Pack encryption");
-            }
+
+            Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Pack encryption");
 
             const int PackSize = 0x880;
             const string PackSignature = "pack";
@@ -131,36 +114,26 @@ namespace AssetStudio
             var packIdx = data.Search(PackSignature);
             if (packIdx == -1)
             {
-                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                {
-                    Logger.Verbose($"Signature {PackSignature} was not found, aborting...");
-                }
+
+                Logger.Verbose($"Signature {PackSignature} was not found, aborting...");
                 reader.Position = 0;
                 return reader;
             }
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Found signature {PackSignature} at offset 0x{packIdx:X8}");
-            }
+
+            Logger.Verbose($"Found signature {PackSignature} at offset 0x{packIdx:X8}");
             var mr0kIdx = data.Search("mr0k", packIdx);
             if (mr0kIdx == -1)
             {
-                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                {
-                    Logger.Verbose("Signature mr0k was not found, aborting...");
-                }
+
+                Logger.Verbose("Signature mr0k was not found, aborting...");
                 reader.Position = 0;
                 return reader;
             }
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Found signature mr0k signature at offset 0x{mr0kIdx:X8}");
-            }
 
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose("Attempting to process pack chunks...");
-            }
+            Logger.Verbose($"Found signature mr0k signature at offset 0x{mr0kIdx:X8}");
+
+
+            Logger.Verbose("Attempting to process pack chunks...");
             var ms = new MemoryStream();
             try
             {
@@ -175,21 +148,15 @@ namespace AssetStudio
                     var signature = reader.ReadStringToNull(4);
                     if (signature == PackSignature)
                     {
-                        if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                        {
-                            Logger.Verbose($"Found {PackSignature} chunk at position {reader.Position - PackSignature.Length}");
-                        }
+
+                        Logger.Verbose($"Found {PackSignature} chunk at position {reader.Position - PackSignature.Length}");
                         var isMr0k = reader.ReadBoolean();
-                        if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                        {
-                            Logger.Verbose("Chunk is mr0k encrypted");
-                        }
+
+                        Logger.Verbose("Chunk is mr0k encrypted");
                         var blockSize = BinaryPrimitives.ReadInt32LittleEndian(reader.ReadBytes(4));
 
-                        if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                        {
-                            Logger.Verbose($"Chunk size is 0x{blockSize:X8}");
-                        }
+
+                        Logger.Verbose($"Chunk size is 0x{blockSize:X8}");
                         Span<byte> buffer = new byte[blockSize];
                         reader.Read(buffer);
                         if (isMr0k)
@@ -200,10 +167,8 @@ namespace AssetStudio
 
                         if (bundleSize == 0)
                         {
-                            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                            {
-                                Logger.Verbose("This is header chunk !! attempting to read the bundle size");
-                            }
+
+                            Logger.Verbose("This is header chunk !! attempting to read the bundle size");
                             using var blockReader = new EndianBinaryReader(new MemoryStream(buffer.ToArray()));
                             var header = new Header()
                             {
@@ -214,10 +179,8 @@ namespace AssetStudio
                                 size = blockReader.ReadInt64()
                             };
                             bundleSize = header.size;
-                            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                            {
-                                Logger.Verbose($"Bundle size is 0x{bundleSize:X8}");
-                            }
+
+                            Logger.Verbose($"Bundle size is 0x{bundleSize:X8}");
                         }
 
                         readSize += buffer.Length;
@@ -226,18 +189,14 @@ namespace AssetStudio
                         {
                             var padding = PackSize - 9 - blockSize;
                             reader.Position += padding;
-                            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                            {
-                                Logger.Verbose($"Skip 0x{padding:X8} padding");
-                            }
+
+                            Logger.Verbose($"Skip 0x{padding:X8} padding");
                         }
 
                         if (readSize == bundleSize)
                         {
-                            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                            {
-                                Logger.Verbose($"Bundle has been read entirely !!");
-                            }
+
+                            Logger.Verbose($"Bundle has been read entirely !!");
                             readSize = 0;
                             bundleSize = 0;
                         }
@@ -249,10 +208,8 @@ namespace AssetStudio
                     signature = reader.ReadStringToNull();
                     if (signature == UnityFSSignature)
                     {
-                        if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                        {
-                            Logger.Verbose($"Found {UnityFSSignature} chunk at position {reader.Position - (UnityFSSignature.Length + 1)}");
-                        }
+
+                        Logger.Verbose($"Found {UnityFSSignature} chunk at position {reader.Position - (UnityFSSignature.Length + 1)}");
                         var header = new Header()
                         {
                             signature = reader.ReadStringToNull(),
@@ -262,10 +219,8 @@ namespace AssetStudio
                             size = reader.ReadInt64()
                         };
 
-                        if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                        {
-                            Logger.Verbose($"Bundle size is 0x{header.size:X8}");
-                        }
+
+                        Logger.Verbose($"Bundle size is 0x{header.size:X8}");
                         reader.Position = pos;
                         reader.BaseStream.CopyTo(ms, header.size);
                         continue;
@@ -287,28 +242,22 @@ namespace AssetStudio
                 reader.Dispose();
             }
 
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose("Decrypted pack file successfully !!");
-            }
+
+            Logger.Verbose("Decrypted pack file successfully !!");
             ms.Position = 0;
             return new FileReader(reader.FullPath, ms);
         }
 
         public static FileReader DecryptMark(FileReader reader)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Mark encryption");
-            }
+
+            Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Mark encryption");
 
             var signature = reader.ReadStringToNull(4);
             if (signature != "mark")
             {
-                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                {
-                    Logger.Verbose($"Expected signature mark, found {signature} instead, aborting...");
-                }
+
+                Logger.Verbose($"Expected signature mark, found {signature} instead, aborting...");
                 reader.Position = 0;
                 return reader;
             }
@@ -344,10 +293,8 @@ namespace AssetStudio
                 }
             }
 
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose("Decrypted mark file successfully !!");
-            }
+
+            Logger.Verbose("Decrypted mark file successfully !!");
             reader.Dispose();
             dataStream.Position = 0;
             return new FileReader(reader.FullPath, dataStream);
@@ -355,10 +302,8 @@ namespace AssetStudio
 
         public static FileReader DecryptEnsembleStar(FileReader reader)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Ensemble Star encryption");
-            }
+
+            Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Ensemble Star encryption");
             using (reader)
             {
                 var data = reader.ReadBytes((int)reader.Length);
@@ -377,62 +322,48 @@ namespace AssetStudio
                     data[i] = (byte)(EnsembleStarKey1[k1] ^ ((size ^ EnsembleStarKey3[k3] ^ data[i] ^ EnsembleStarKey2[k2]) + remaining));
                 }
 
-                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                {
-                    Logger.Verbose("Decrypted Ensemble Star file successfully !!");
-                }
+
+                Logger.Verbose("Decrypted Ensemble Star file successfully !!");
                 return new FileReader(reader.FullPath, new MemoryStream(data));
             }
         }
 
         public static FileReader ParseFakeHeader(FileReader reader)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Attempting to parse file {reader.FileName} with fake header");
-            }
+
+            Logger.Verbose($"Attempting to parse file {reader.FileName} with fake header");
 
             var stream = reader.BaseStream;
             var data = reader.ReadBytes(0x1000);
             var idx = data.Search("UnityFS");
             if (idx != -1)
             {
-                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                {
-                    Logger.Verbose($"Found fake header at offset 0x{idx:X8}");
-                }
+
+                Logger.Verbose($"Found fake header at offset 0x{idx:X8}");
                 var idx2 = data[(idx + 1)..].Search("UnityFS");
                 if (idx2 != -1)
                 {
-                    if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                    {
-                        Logger.Verbose($"Found real header at offset 0x{idx + idx2 + 1:X8}");
-                    }
+
+                    Logger.Verbose($"Found real header at offset 0x{idx + idx2 + 1:X8}");
                     stream = new OffsetStream(stream, idx + idx2 + 1);
                 }
                 else
                 {
-                    if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                    {
-                        Logger.Verbose("Real header was not found, assuming fake header is the real one");
-                    }
+
+                    Logger.Verbose("Real header was not found, assuming fake header is the real one");
                     stream = new OffsetStream(stream, idx);
                 }
             }
 
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose("Parsed fake header file successfully !!");
-            }
+
+            Logger.Verbose("Parsed fake header file successfully !!");
             return new FileReader(reader.FullPath, stream);
         }
 
         public static FileReader DecryptFantasyOfWind(FileReader reader)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Fantasy of Wind encryption");
-            }
+
+            Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Fantasy of Wind encryption");
 
             byte[] encryptKeyName = Encoding.UTF8.GetBytes("28856");
             const int MinLength = 0xC8;
@@ -444,10 +375,8 @@ namespace AssetStudio
             var signature = reader.ReadStringToNull(HeadLength);
             if (string.Compare(signature, "K9999") > 0 || reader.Length <= MinLength)
             {
-                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                {
-                    Logger.Verbose($"Signature version {signature} is higher than K9999 or stream length {reader.Length} is less than minimum length {MinLength}, aborting...");
-                }
+
+                Logger.Verbose($"Signature version {signature} is higher than K9999 or stream length {reader.Length} is less than minimum length {MinLength}, aborting...");
                 reader.Position = 0;
                 return reader;
             }
@@ -489,18 +418,14 @@ namespace AssetStudio
             reader.BaseStream.CopyTo(ms);
             ms.Position = 0;
 
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose("Decrypted Fantasy of Wind file successfully !!");
-            }
+
+            Logger.Verbose("Decrypted Fantasy of Wind file successfully !!");
             return new FileReader(reader.FullPath, ms);
         }
         public static FileReader ParseHelixWaltz2(FileReader reader)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Helix Waltz 2 encryption");
-            }
+
+            Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Helix Waltz 2 encryption");
 
             var originalHeader = new byte[] { 0x55, 0x6E, 0x69, 0x74, 0x79, 0x46, 0x53, 0x00, 0x00, 0x00, 0x00, 0x07, 0x35, 0x2E, 0x78, 0x2E };
 
@@ -509,10 +434,8 @@ namespace AssetStudio
 
             if (signature != "SzxFS")
             {
-                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                {
-                    Logger.Verbose($"Expected signature SzxFS, found {signature} instead, aborting...");
-                }
+
+                Logger.Verbose($"Expected signature SzxFS, found {signature} instead, aborting...");
                 reader.Position = 0;
                 return reader;
             }
@@ -544,10 +467,8 @@ namespace AssetStudio
                 data[i] = key[idx];
             }
 
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose("Decrypted Helix Waltz 2 file successfully !!");
-            }
+
+            Logger.Verbose("Decrypted Helix Waltz 2 file successfully !!");
             MemoryStream ms = new();
             ms.Write(originalHeader);
             ms.Write(data);
@@ -557,10 +478,8 @@ namespace AssetStudio
         }
         public static FileReader DecryptAnchorPanic(FileReader reader)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Anchor Panic encryption");
-            }
+
+            Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Anchor Panic encryption");
 
             const int BlockSize = 0x800;
 
@@ -570,45 +489,35 @@ namespace AssetStudio
             var idx = data.Search("UnityFS");
             if (idx != -1)
             {
-                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                {
-                    Logger.Verbose("Found UnityFS signature, file might not be encrypted");
-                }
+
+                Logger.Verbose("Found UnityFS signature, file might not be encrypted");
                 return ParseFakeHeader(reader);
             }
 
             var key = GetKey(Path.GetFileNameWithoutExtension(reader.FileName));
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Calculated key is {key}");
-            }
+
+            Logger.Verbose($"Calculated key is {key}");
 
             var chunkIndex = 0;
             MemoryStream ms = new();
             while (reader.Remaining > 0)
             {
                 var chunkSize = Math.Min((int)reader.Remaining, BlockSize);
-                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                {
-                    Logger.Verbose($"Chunk {chunkIndex} size is {chunkSize}");
-                }
+
+                Logger.Verbose($"Chunk {chunkIndex} size is {chunkSize}");
                 var chunk = reader.ReadBytes(chunkSize);
                 if (IsEncrypt((int)reader.Length, chunkIndex++))
                 {
-                    if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                    {
-                        Logger.Verbose($"Chunk {chunkIndex} is encrypted, decrypting...");
-                    }
+
+                    Logger.Verbose($"Chunk {chunkIndex} is encrypted, decrypting...");
                     RC4(chunk, key);
                 }
 
                 ms.Write(chunk);
             }
 
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose("Decrypted Anchor Panic file successfully !!");
-            }
+
+            Logger.Verbose("Decrypted Anchor Panic file successfully !!");
             ms.Position = 0;
             return new FileReader(reader.FullPath, ms);
 
@@ -692,20 +601,16 @@ namespace AssetStudio
 
         public static FileReader DecryptDreamscapeAlbireo(FileReader reader)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Dreamscape Albireo encryption");
-            }
+
+            Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Dreamscape Albireo encryption");
 
             var key = new byte[] { 0x1E, 0x1E, 0x01, 0x01, 0xFC };
 
             var signature = reader.ReadStringToNull(4);
             if (signature != "MJJ")
             {
-                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                {
-                    Logger.Verbose($"Expected signature MJJ, found {signature} instead, aborting...");
-                }
+
+                Logger.Verbose($"Expected signature MJJ, found {signature} instead, aborting...");
                 reader.Position = 0;
                 return reader;
             }
@@ -727,10 +632,8 @@ namespace AssetStudio
             var sizeLow = (u5 >> 24 | (u2 << 8)) ^ u1;
             var size = (long)(sizeHigh << 32 | sizeLow);
 
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Decrypted File info: Flag 0x{flag:X8} | Compressed blockInfo size 0x{compressedBlocksInfoSize:X8} | Decompressed blockInfo size 0x{uncompressedBlocksInfoSize:X8} | Bundle size 0x{size:X8}");
-            }
+
+            Logger.Verbose($"Decrypted File info: Flag 0x{flag:X8} | Compressed blockInfo size 0x{compressedBlocksInfoSize:X8} | Decompressed blockInfo size 0x{uncompressedBlocksInfoSize:X8} | Bundle size 0x{size:X8}");
 
             var blocksInfo = reader.ReadBytes((int)compressedBlocksInfoSize);
             for (int i = 0; i < blocksInfo.Length; i++)
@@ -760,10 +663,8 @@ namespace AssetStudio
             reader.BaseStream.CopyTo(ms);
             ms.Position = 0;
 
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose("Decrypted Dreamscape Albireo file successfully !!");
-            }
+
+            Logger.Verbose("Decrypted Dreamscape Albireo file successfully !!");
             return new FileReader(reader.FullPath, ms);
 
             static uint Scrample(uint value) => (value >> 5) & 0xFFE000 | (value >> 29) | (value << 14) & 0xFF000000 | (8 * value) & 0x1FF8;
@@ -771,10 +672,8 @@ namespace AssetStudio
 
         public static FileReader DecryptImaginaryFest(FileReader reader)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Imaginary Fest encryption");
-            }
+
+            Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Imaginary Fest encryption");
 
             const string dataRoot = "data";
             var key = new byte[] { 0xBD, 0x65, 0xF2, 0x4F, 0xBE, 0xD1, 0x36, 0xD4, 0x95, 0xFE, 0x64, 0x94, 0xCB, 0xD3, 0x7E, 0x91, 0x57, 0xB7, 0x94, 0xB7, 0x9F, 0x70, 0xB2, 0xA9, 0xA0, 0xD5, 0x4E, 0x36, 0xC6, 0x40, 0xE0, 0x2F, 0x4E, 0x6E, 0x76, 0x6D, 0xCD, 0xAE, 0xEA, 0x05, 0x13, 0x6B, 0xA7, 0x84, 0xFF, 0xED, 0x90, 0x91, 0x15, 0x7E, 0xF1, 0xF8, 0xA5, 0x9C, 0xB6, 0xDE, 0xF9, 0x56, 0x57, 0x18, 0xBF, 0x94, 0x63, 0x6F, 0x1B, 0xE2, 0x92, 0xD2, 0x7E, 0x25, 0x95, 0x23, 0x24, 0xCB, 0x93, 0xD3, 0x36, 0xD9, 0x18, 0x11, 0xF5, 0x50, 0x18, 0xE4, 0x22, 0x28, 0xD8, 0xE2, 0x1A, 0x57, 0x1E, 0x04, 0x88, 0xA5, 0x84, 0xC0, 0x6C, 0x3B, 0x46, 0x62, 0xCE, 0x85, 0x10, 0x2E, 0xA0, 0xDC, 0xD3, 0x09, 0xB2, 0xB6, 0xA4, 0x8D, 0xAF, 0x74, 0x36, 0xF7, 0x9A, 0x3F, 0x98, 0xDA, 0x62, 0x57, 0x71, 0x75, 0x92, 0x05, 0xA3, 0xB2, 0x7C, 0xCA, 0xFB, 0x1E, 0xBE, 0xC9, 0x24, 0xC1, 0xD2, 0xB9, 0xDE, 0xE4, 0x7E, 0xF3, 0x0F, 0xB4, 0xFB, 0xA2, 0xC1, 0xC2, 0x14, 0x5C, 0x78, 0x13, 0x74, 0x41, 0x8D, 0x79, 0xF4, 0x3C, 0x49, 0x92, 0x98, 0xF2, 0xCD, 0x8C, 0x09, 0xA6, 0x40, 0x34, 0x51, 0x1C, 0x11, 0x2B, 0xE0, 0x6B, 0x42, 0x9C, 0x86, 0x41, 0x06, 0xF6, 0xD2, 0x87, 0xF1, 0x10, 0x26, 0x89, 0xC2, 0x7B, 0x2A, 0x5D, 0x1C, 0xDA, 0x92, 0xC8, 0x93, 0x59, 0xF9, 0x60, 0xD0, 0xB5, 0x1E, 0xD5, 0x75, 0x56, 0xA0, 0x05, 0x83, 0x90, 0xAC, 0x72, 0xC8, 0x10, 0x09, 0xED, 0x1A, 0x46, 0xD9, 0x39, 0x6B, 0x9E, 0x19, 0x5E, 0x51, 0x44, 0x09, 0x0D, 0x74, 0xAB, 0xA8, 0xF9, 0x32, 0x43, 0xBC, 0xD2, 0xED, 0x7B, 0x6C, 0x75, 0x32, 0x24, 0x14, 0x43, 0x5D, 0x98, 0xB2, 0xFC, 0xFB, 0xF5, 0x9A, 0x19, 0x03, 0xB0, 0xB7, 0xAC, 0xAE, 0x8B };
@@ -783,20 +682,16 @@ namespace AssetStudio
             var signature = Encoding.UTF8.GetString(signatureBytes[..7]);
             if (signature == "UnityFS")
             {
-                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                {
-                    Logger.Verbose("Found UnityFS signature, file might not be encrypted");
-                }
+
+                Logger.Verbose("Found UnityFS signature, file might not be encrypted");
                 reader.Position = 0;
                 return reader;
             }
 
             if (signatureBytes[7] != 0)
             {
-                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                {
-                    Logger.Verbose($"File might be encrypted with a byte xorkey 0x{signatureBytes[7]:X8}, attemping to decrypting...");
-                }
+
+                Logger.Verbose($"File might be encrypted with a byte xorkey 0x{signatureBytes[7]:X8}, attemping to decrypting...");
                 var xorKey = signatureBytes[7];
                 for (int i = 0; i < signatureBytes.Length; i++)
                 {
@@ -805,20 +700,16 @@ namespace AssetStudio
                 signature = Encoding.UTF8.GetString(signatureBytes[..7]);
                 if (signature == "UnityFS")
                 {
-                    if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                    {
-                        Logger.Verbose("Found UnityFS signature, key is valid, decrypting the rest of the stream");
-                    }
+
+                    Logger.Verbose("Found UnityFS signature, key is valid, decrypting the rest of the stream");
                     var remaining = reader.ReadBytes((int)reader.Remaining);
                     for (int i = 0; i < remaining.Length; i++)
                     {
                         remaining[i] ^= xorKey;
                     }
 
-                    if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                    {
-                        Logger.Verbose("Decrypted Imaginary Fest file successfully !!");
-                    }
+
+                    Logger.Verbose("Decrypted Imaginary Fest file successfully !!");
                     var stream = new MemoryStream();
                     stream.Write(signatureBytes);
                     stream.Write(remaining);
@@ -833,57 +724,41 @@ namespace AssetStudio
             var startIdx = Array.FindIndex(paths, x => x == dataRoot);
             if (startIdx != -1 && startIdx != paths.Length - 1)
             {
-                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                {
-                    Logger.Verbose("File is in the data folder !!");
-                }
+
+                Logger.Verbose("File is in the data folder !!");
                 var path = string.Join(Path.AltDirectorySeparatorChar, paths[(startIdx + 1)..]);
                 var offset = GetLoadAssetBundleOffset(path);
                 if (offset > 0 && offset < reader.Length)
                 {
-                    if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                    {
-                        Logger.Verbose($"Calculated offset is 0x{offset:X8}, attempting to read signature...");
-                    }
+
+                    Logger.Verbose($"Calculated offset is 0x{offset:X8}, attempting to read signature...");
                     reader.Position = offset;
                     signature = reader.ReadStringToNull(7);
                     if (signature == "UnityFS")
                     {
-                        if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                        {
-                            Logger.Verbose($"Found UnityFS signature, file starts at 0x{offset:X8} !!");
-                        }
-                        if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                        {
-                            Logger.Verbose("Parsed Imaginary Fest file successfully !!");
-                        }
+
+                        Logger.Verbose($"Found UnityFS signature, file starts at 0x{offset:X8} !!");
+
+                        Logger.Verbose("Parsed Imaginary Fest file successfully !!");
                         reader.Position = offset;
                         return new FileReader(reader.FullPath, new MemoryStream(reader.ReadBytes((int)reader.Remaining)));
                     }
                 }
-                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                {
-                    Logger.Verbose($"Invalid offset, attempting to generate key...");
-                }
+
+                Logger.Verbose($"Invalid offset, attempting to generate key...");
                 reader.Position = 0;
                 var data = reader.ReadBytes((int)reader.Remaining);
                 var key_value = GetHashCode(path);
-                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                {
-                    Logger.Verbose($"Generated key is 0x{key_value:X8}, decrypting...");
-                }
+
+                Logger.Verbose($"Generated key is 0x{key_value:X8}, decrypting...");
                 Decrypt(data, key_value);
-                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                {
-                    Logger.Verbose("Decrypted Imaginary Fest file successfully !!");
-                }
+
+                Logger.Verbose("Decrypted Imaginary Fest file successfully !!");
                 return new FileReader(reader.FullPath, new MemoryStream(data));
             }
 
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose("File doesn't match any of the encryption types");
-            }
+
+            Logger.Verbose("File doesn't match any of the encryption types");
             reader.Position = 0;
             return reader;
 
@@ -943,10 +818,8 @@ namespace AssetStudio
         }
         public static FileReader DecryptAliceGearAegis(FileReader reader)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Alice Gear Aegis encryption");
-            }
+
+            Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Alice Gear Aegis encryption");
 
             var key = new byte[] { 0x1B, 0x59, 0x62, 0x33, 0x78, 0x76, 0x45, 0xB3, 0x5B, 0x48, 0x39, 0xD7, 0x9C, 0x21, 0x89, 0x94 };
 
@@ -974,10 +847,8 @@ namespace AssetStudio
                 encryptedBlock[i] ^= key[seed++ % key.Length];
             }
 
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose("Decrypted Alice Gear Aegis file successfully !!");
-            }
+
+            Logger.Verbose("Decrypted Alice Gear Aegis file successfully !!");
             MemoryStream ms = new();
             ms.Write(Encoding.UTF8.GetBytes("UnityFS\x00"));
             ms.Write(encryptedBlock);
@@ -989,10 +860,8 @@ namespace AssetStudio
 
         public static FileReader DecryptProjectSekai(FileReader reader)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Project Sekai encryption");
-            }
+
+            Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Project Sekai encryption");
 
             var key = new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00 };
 
@@ -1023,20 +892,16 @@ namespace AssetStudio
 
             ms.Write(reader.ReadBytes((int)reader.Remaining));
 
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose("Decrypted Project Sekai file successfully !!");
-            }
+
+            Logger.Verbose("Decrypted Project Sekai file successfully !!");
             ms.Position = 0;
             return new FileReader(reader.FullPath, ms);
         }
 
         public static FileReader DecryptCodenameJump(FileReader reader)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Codename Jump encryption");
-            }
+
+            Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Codename Jump encryption");
 
             var key = new byte[] { 0x6B, 0xC9, 0xAC, 0x0E, 0xE7, 0xD2, 0xB1, 0x99, 0x39, 0x59, 0x26, 0x56, 0x1B, 0x6C, 0xBB, 0xA4, 0x83, 0xC8, 0x79, 0x2E, 0x4B, 0xB2, 0x9D, 0x69, 0x35, 0xB8, 0x9A, 0xD6, 0xD5, 0x63, 0x95, 0x20, 0x14, 0x82, 0x1C, 0x7C, 0xD4, 0xA9, 0x15, 0x56, 0xC3, 0xC5, 0xD7, 0x21, 0x03, 0x4E, 0x4A, 0x34, 0x6B, 0x05, 0x2D, 0x0B, 0xE2, 0x7D, 0x7D, 0xD7, 0xB2, 0xAE, 0x9E, 0x56, 0x91, 0xBA, 0x81, 0x81, 0x0E, 0x08, 0x4D, 0xA0, 0x09, 0xB5, 0x60, 0x74, 0x58, 0x36, 0x89, 0x09, 0x19, 0x2C, 0x10, 0xB1, 0xD0, 0xA3, 0x4C, 0x36, 0xAA, 0x95, 0xBC, 0x10, 0x39, 0x30, 0x93, 0xE8, 0xAD, 0x38, 0x51, 0xAA, 0xCA, 0x08, 0x67, 0x03, 0x08, 0xD1, 0x20, 0x05, 0x27, 0x0B, 0x9D, 0xB1, 0x4B, 0x42, 0x98, 0x03, 0x5A, 0x49, 0x97, 0xB0, 0x2A, 0xB6, 0x3A, 0x2C, 0x33, 0xA3, 0x65, 0xC7, 0x7D, 0xB9, 0x41, 0xAD, 0xE7, 0x70, 0x59, 0x61, 0x82, 0x59, 0xC9, 0x5A, 0x0B, 0x13, 0x6D, 0x95, 0x31, 0x31, 0x23, 0x22, 0xD0, 0x51, 0x45, 0x59, 0x09, 0x57, 0xA2, 0x60, 0x3B, 0xCE, 0x9B, 0x6E, 0x22, 0x9E, 0x87, 0xBD, 0x83, 0x88, 0x73, 0xD0, 0x79, 0xD0, 0xAC, 0xDC, 0xE1, 0x6C, 0xB3, 0xA4, 0xCC, 0x98, 0x04, 0xE8, 0xB6, 0xBB, 0xAC, 0x21, 0xB9, 0x2A, 0x6E, 0x78, 0x01, 0xED, 0xC1, 0xA6, 0x79, 0xE0, 0x9B, 0x68, 0x7B, 0x8A, 0x25, 0xE4, 0x47, 0xBB, 0x5D, 0x2A, 0xC0, 0x5A, 0xDE, 0x31, 0xEC, 0x5C, 0xCE, 0x6D, 0xBE, 0x68, 0x1E, 0x93, 0x44, 0x89, 0x56, 0x68, 0x4C, 0x6E, 0xD0, 0x46, 0xB0, 0x97, 0xE4, 0x72, 0x23, 0xB5, 0x87, 0x18, 0xD5, 0x2D, 0xA9, 0x0E, 0x63, 0xAE, 0xCE, 0x4A, 0x69, 0xD0, 0xD1, 0x6B, 0xB0, 0x0C, 0x1A, 0xBD, 0xE3, 0x01, 0x45, 0x8B, 0x93, 0xD5, 0x83, 0x9C, 0xB7, 0x12, 0x6C, 0xD5 };
 
@@ -1050,10 +915,8 @@ namespace AssetStudio
             var signature = Encoding.UTF8.GetString(signatureBytes[..7]);
             if (signature != "UnityFS")
             {
-                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                {
-                    Logger.Verbose($"Unknown signature, exepcted UnityFS but got {signature} instead !!");
-                }
+
+                Logger.Verbose($"Unknown signature, exepcted UnityFS but got {signature} instead !!");
                 return reader;
             }
 
@@ -1063,10 +926,8 @@ namespace AssetStudio
                 data[i] ^= key[i % key.Length];
             }
 
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose("Decrypted Codename Jump file successfully !!");
-            }
+
+            Logger.Verbose("Decrypted Codename Jump file successfully !!");
             MemoryStream ms = new();
             ms.Write(data);
             ms.Position = 0;
@@ -1075,10 +936,8 @@ namespace AssetStudio
 
         public static FileReader DecryptGirlsFrontline(FileReader reader)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Girls Frontline encryption");
-            }
+
+            Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Girls Frontline encryption");
 
             var originalHeader = new byte[] { 0x55, 0x6E, 0x69, 0x74, 0x79, 0x46, 0x53, 0x00, 0x00, 0x00, 0x00, 0x07, 0x35, 0x2E, 0x78, 0x2E };
 
@@ -1089,25 +948,21 @@ namespace AssetStudio
                 key[i] = b != originalHeader[i] ? b : originalHeader[i];
             }
             reader.Position = 0;
-            var xorStream = new GF2Stream(reader.BaseStream,key,0x8000);
+            var xorStream = new GF2Stream(reader.BaseStream, key, 0x8000);
             return new FileReader(reader.FullPath, xorStream);
         }
 
         public static FileReader DecryptReverse1999(FileReader reader)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Reverse: 1999 encryption");
-            }
+
+            Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Reverse: 1999 encryption");
 
             var signatureBytes = reader.ReadBytes(8);
             var signature = Encoding.UTF8.GetString(signatureBytes[..7]);
             if (signature == "UnityFS")
             {
-                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                {
-                    Logger.Verbose("Found UnityFS signature, file might not be encrypted");
-                }
+
+                Logger.Verbose("Found UnityFS signature, file might not be encrypted");
                 reader.Position = 0;
                 return reader;
             }
@@ -1121,20 +976,16 @@ namespace AssetStudio
             signature = Encoding.UTF8.GetString(signatureBytes[..7]);
             if (signature == "UnityFS")
             {
-                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                {
-                    Logger.Verbose($"Found UnityFS signature, key 0x{key:X2} is valid, decrypting the rest of the stream");
-                }
+
+                Logger.Verbose($"Found UnityFS signature, key 0x{key:X2} is valid, decrypting the rest of the stream");
                 var remaining = reader.ReadBytes((int)reader.Remaining);
                 for (int i = 0; i < remaining.Length; i++)
                 {
                     remaining[i] ^= key;
                 }
 
-                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                {
-                    Logger.Verbose("Decrypted Reverse: 1999 file successfully !!");
-                }
+
+                Logger.Verbose("Decrypted Reverse: 1999 file successfully !!");
                 MemoryStream stream = new();
                 stream.Write(signatureBytes);
                 stream.Write(remaining);
@@ -1142,10 +993,8 @@ namespace AssetStudio
                 return new FileReader(reader.FullPath, stream);
             }
 
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose("File doesn't match any of the encryption types");
-            }
+
+            Logger.Verbose("File doesn't match any of the encryption types");
             reader.Position = 0;
             return reader;
 
@@ -1162,10 +1011,8 @@ namespace AssetStudio
 
         public static FileReader DecryptJJKPhantomParade(FileReader reader)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Jujutsu Kaisen: Phantom Parade encryption");
-            }
+
+            Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Jujutsu Kaisen: Phantom Parade encryption");
 
             var key = reader.ReadBytes(2);
             var signatureBytes = reader.ReadBytes(13);
@@ -1220,10 +1067,8 @@ namespace AssetStudio
                 data[i] ^= keyBytes[i];
             }
 
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose("Decrypted Jujutsu Kaisen: Phantom Parade file successfully !!");
-            }
+
+            Logger.Verbose("Decrypted Jujutsu Kaisen: Phantom Parade file successfully !!");
 
             MemoryStream ms = new();
             ms.Write(data);
@@ -1233,10 +1078,8 @@ namespace AssetStudio
 
         public static FileReader DecryptMuvLuvDimensions(FileReader reader)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Muv Luv Dimensions encryption");
-            }
+
+            Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Muv Luv Dimensions encryption");
 
             var key = new byte[] { 0xFD, 0x13, 0x7B, 0xEE, 0xC5, 0xFE, 0x50, 0x12, 0x4D, 0x38 };
 
@@ -1246,10 +1089,8 @@ namespace AssetStudio
                 data[i] ^= key[i % key.Length];
             }
 
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose("Decrypted Muv Luv Dimensions file successfully !!");
-            }
+
+            Logger.Verbose("Decrypted Muv Luv Dimensions file successfully !!");
 
             MemoryStream ms = new();
             ms.Write(data);
@@ -1259,10 +1100,8 @@ namespace AssetStudio
 
         public static FileReader DecryptPartyAnimals(FileReader reader)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Party Animals encryption");
-            }
+
+            Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Party Animals encryption");
 
             var table = new int[] { 0x8C, 0xE8, 0x93, 0xEB, 0xD1, 0xF0, 0x82, 0xCF, 0x9A, 0xBB, 0xEF, 0xB8, 0xC7, 0xA8, 0x8E, 0xDB, 0x96, 0x80, 0xAD, 0xC2, 0x86, 0xD8, 0x81, 0xFA, 0xE6, 0xAF, 0xD0, 0x9E, 0x95, 0xFE, 0xF6, 0x88, 0xF8, 0x85, 0xE4, 0xBC, 0xB6, 0xA4, 0xCB, 0xE3, 0xE0, 0x9F, 0xD3, 0xA7, 0xA3, 0xFF, 0x9C, 0x9D, 0xEE, 0xDE, 0xC9, 0xB0, 0xD5, 0xBE, 0x89, 0xF4, 0xBF, 0xED, 0xD9, 0xBA, 0xA5, 0xCE, 0x94, 0xC5, 0xCC, 0x90, 0xC8, 0xBD, 0x92, 0xB7, 0xF7, 0x97, 0x9B, 0xAB, 0xB4, 0xE9, 0xA6, 0xAC, 0xA9, 0xB2, 0xC1, 0xE5, 0xA1, 0xA0, 0xC4, 0xDC, 0xEC, 0xFD, 0xC0, 0xF3, 0xD2, 0xB3, 0x98, 0x8B, 0xD6, 0xB5, 0xE7, 0xAE, 0xC3, 0xE1, 0xB1, 0xF5, 0xA2, 0xE2, 0xF2, 0xAA, 0xF9, 0x99, 0xD4, 0x84, 0xFC, 0x8D, 0xF1, 0xDF, 0xB9, 0xD7, 0xDA, 0x91, 0xCA, 0x83, 0xEA, 0x8F, 0xCD, 0xDD, 0xC6, 0x87, 0xFB, 0x8A };
 
@@ -1279,10 +1118,8 @@ namespace AssetStudio
                 data[i] ^= (byte)(key ^ (i / 8) + 1);
             }
 
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose("Decrypted Party Animals file successfully !!");
-            }
+
+            Logger.Verbose("Decrypted Party Animals file successfully !!");
 
             MemoryStream ms = new();
             ms.Write(data);
@@ -1292,19 +1129,15 @@ namespace AssetStudio
 
         public static FileReader DecryptLoveAndDeepspace(FileReader reader)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Love And Deepspace encryption");
-            }
+
+            Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Love And Deepspace encryption");
 
             var signatureBytes = reader.ReadBytes(8);
             var signature = Encoding.UTF8.GetString(signatureBytes[..7]);
             if (signature != "UnityFS")
             {
-                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                {
-                    Logger.Verbose("signature UnityFS not found, trying new format");
-                }
+
+                Logger.Verbose("signature UnityFS not found, trying new format");
                 reader.Position = 0;
 
                 reader.Endian = EndianType.LittleEndian;
@@ -1343,10 +1176,8 @@ namespace AssetStudio
                                 blocksInfo[i] ^= key[i % key.Length];
                             }
 
-                            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                            {
-                                Logger.Verbose("Decrypted Love And Deepspace file successfully !!");
-                            }
+
+                            Logger.Verbose("Decrypted Love And Deepspace file successfully !!");
 
                             MemoryStream ms = new();
                             ms.Write(Encoding.UTF8.GetBytes("UnityFS\x0"));
@@ -1378,10 +1209,8 @@ namespace AssetStudio
                     data[i] ^= key[i % key.Length];
                 }
 
-                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                {
-                    Logger.Verbose("Decrypted Love And Deepspace file successfully !!");
-                }
+
+                Logger.Verbose("Decrypted Love And Deepspace file successfully !!");
 
                 MemoryStream ms = new();
                 ms.Write(data);
@@ -1389,10 +1218,8 @@ namespace AssetStudio
                 return new FileReader(reader.FullPath, ms);
             }
 
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose("File doesn't match with game's relative path");
-            }
+
+            Logger.Verbose("File doesn't match with game's relative path");
             reader.Position = 0;
             return reader;
 
@@ -1400,25 +1227,19 @@ namespace AssetStudio
             {
                 const string baseFolder = "bundles";
 
-                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                {
-                    Logger.Verbose($"Fixing path before checking...");
-                }
+
+                Logger.Verbose($"Fixing path before checking...");
                 var dirs = path.Split(Path.DirectorySeparatorChar);
                 if (dirs.Contains(baseFolder))
                 {
                     var idx = Array.IndexOf(dirs, baseFolder);
-                    if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                    {
-                        Logger.Verbose($"Seperator found at index {idx}");
-                    }
+
+                    Logger.Verbose($"Seperator found at index {idx}");
                     fixedPath = string.Join(Path.DirectorySeparatorChar, dirs[(idx + 1)..]).Replace("\\", "/");
                     return true;
                 }
-                if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-                {
-                    Logger.Verbose($"Unknown path");
-                }
+
+                Logger.Verbose($"Unknown path");
                 fixedPath = string.Empty;
                 return false;
             }
@@ -1470,10 +1291,8 @@ namespace AssetStudio
         }
         public static FileReader DecryptSchoolGirlStrikers(FileReader reader)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Attempting to decrypt file {reader.FileName} with School Girl Strikers encryption");
-            }
+
+            Logger.Verbose($"Attempting to decrypt file {reader.FileName} with School Girl Strikers encryption");
 
             var data = reader.ReadBytes((int)reader.Remaining);
 
@@ -1491,10 +1310,8 @@ namespace AssetStudio
                 }
             }
 
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose("Decrypted School Girl Strikers file successfully !!");
-            }
+
+            Logger.Verbose("Decrypted School Girl Strikers file successfully !!");
 
             MemoryStream ms = new();
             ms.Write(data);
@@ -1503,10 +1320,8 @@ namespace AssetStudio
         }
         public static FileReader DecryptNarutoMobile(FileReader reader)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Attempting to decrypt file {reader.FileName} with NarutoMobile encryption");
-            }
+
+            Logger.Verbose($"Attempting to decrypt file {reader.FileName} with NarutoMobile encryption");
             var table = Encoding.UTF8.GetBytes("hAi5luE8FlyblDdCTQC9uxnj3rkNwd1swrKI7Mx1aDFEe2B5h#3X&s54%GuSeHf@");
             var origin = reader.Position;
             var m_Header = new Header()
@@ -1695,11 +1510,9 @@ namespace AssetStudio
         }
         public static FileReader DecryptThreeKingdoms(FileReader reader)
         {
-            if (Logger.Flags.HasFlag(LoggerEvent.Verbose))
-            {
-                Logger.Verbose($"Attempting to decrypt file {reader.FileName} with ThreeKingdoms encryption");
-            }
-          
+
+            Logger.Verbose($"Attempting to decrypt file {reader.FileName} with ThreeKingdoms encryption");
+
             var origin = reader.Position;
             var m_Header = new Header()
             {
@@ -1749,4 +1562,4 @@ namespace AssetStudio
             return new FileReader(reader.FullPath, ms);
         }
     }
-    }
+}

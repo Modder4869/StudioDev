@@ -22,9 +22,8 @@ namespace AssetStudio
             reader.Endian = EndianType.LittleEndian;
 
             var signature = reader.ReadStringToNull(4);
-            if(Logger.Flags.HasFlag(LoggerEvent.Verbose)){
-			Logger.Verbose($"Parsed signature {signature}");
-			}
+
+            Logger.Verbose($"Parsed signature {signature}");
             if (signature != "Blb\x02")
                 throw new Exception("not a Blb file");
 
@@ -39,9 +38,8 @@ namespace AssetStudio
             m_Header.compressedBlocksInfoSize = size;
             m_Header.uncompressedBlocksInfoSize = size;
 
-            if(Logger.Flags.HasFlag(LoggerEvent.Verbose)){
-			Logger.Verbose($"Header: {m_Header}");
-			}
+
+            Logger.Verbose($"Header: {m_Header}");
 
             var header = reader.ReadBytes((int)m_Header.compressedBlocksInfoSize);
             ReadBlocksInfoAndDirectory(header);
@@ -74,9 +72,8 @@ namespace AssetStudio
 
             reader.Position = blocksInfoOffset;
             m_BlocksInfo = new List<BundleFile.StorageBlock>();
-            if(Logger.Flags.HasFlag(LoggerEvent.Verbose)){
-			Logger.Verbose($"Blocks count: {blocksInfoCount}");
-			}
+
+            Logger.Verbose($"Blocks count: {blocksInfoCount}");
             for (int i = 0; i < blocksInfoCount; i++)
             {
                 m_BlocksInfo.Add(new BundleFile.StorageBlock
@@ -86,16 +83,14 @@ namespace AssetStudio
                     flags = (StorageBlockFlags)compressionType
                 });
 
-                if(Logger.Flags.HasFlag(LoggerEvent.Verbose)){
-			Logger.Verbose($"Block {i} Info: {m_BlocksInfo[i]}");
-			}
+
+                Logger.Verbose($"Block {i} Info: {m_BlocksInfo[i]}");
             }
 
             reader.Position = nodesInfoOffset;
             m_DirectoryInfo = new List<BundleFile.Node>();
-            if(Logger.Flags.HasFlag(LoggerEvent.Verbose)){
-			Logger.Verbose($"Directory count: {nodesCount}");
-			}
+
+            Logger.Verbose($"Directory count: {nodesCount}");
             for (int i = 0; i < nodesCount; i++)
             {
                 m_DirectoryInfo.Add(new BundleFile.Node
@@ -121,9 +116,8 @@ namespace AssetStudio
                 m_DirectoryInfo[i].path = reader.ReadStringToNull();
                 reader.Position = pos;
 
-                if(Logger.Flags.HasFlag(LoggerEvent.Verbose)){
-			Logger.Verbose($"Directory {i} Info: {m_DirectoryInfo[i]}");
-			}
+
+                Logger.Verbose($"Directory {i} Info: {m_DirectoryInfo[i]}");
             }
         }
 
@@ -131,9 +125,8 @@ namespace AssetStudio
         {
             Stream blocksStream;
             var uncompressedSizeSum = (int)m_BlocksInfo.Sum(x => x.uncompressedSize);
-            if(Logger.Flags.HasFlag(LoggerEvent.Verbose)){
-			Logger.Verbose($"Total size of decompressed blocks: 0x{uncompressedSizeSum:X8}");
-			}
+
+            Logger.Verbose($"Total size of decompressed blocks: 0x{uncompressedSizeSum:X8}");
             if (uncompressedSizeSum >= int.MaxValue)
                 blocksStream = new FileStream(path + ".temp", FileMode.Create, FileAccess.ReadWrite, FileShare.None, 4096, FileOptions.DeleteOnClose);
             else
@@ -146,9 +139,8 @@ namespace AssetStudio
             foreach (var blockInfo in m_BlocksInfo)
             {
                 var compressionType = (CompressionType)(blockInfo.flags & StorageBlockFlags.CompressionTypeMask);
-                if(Logger.Flags.HasFlag(LoggerEvent.Verbose)){
-			Logger.Verbose($"Block compression type {compressionType}");
-			}
+
+                Logger.Verbose($"Block compression type {compressionType}");
                 switch (compressionType) //kStorageBlockCompressionTypeMask
                 {
                     case CompressionType.None: //None
@@ -198,9 +190,8 @@ namespace AssetStudio
 
         private void ReadFiles(Stream blocksStream, string path)
         {
-            if(Logger.Flags.HasFlag(LoggerEvent.Verbose)){
-			Logger.Verbose($"Writing files from blocks stream...");
-			}
+
+            Logger.Verbose($"Writing files from blocks stream...");
 
             fileList = new List<StreamFile>();
             for (int i = 0; i < m_DirectoryInfo.Count; i++)

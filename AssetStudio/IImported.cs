@@ -234,11 +234,14 @@ namespace AssetStudio
 
         public ImportedAnimationKeyframedTrack FindTrack(string path, string attribute = null)
         {
-            var track = TrackList.Find(t => {
+            var track = TrackList.Find(t =>
+            {
                 if (attribute == null)
                 {
                     return t.Path == path;
-                } else {
+                }
+                else
+                {
                     return t.Path == path && t.BlendShape?.ChannelName == attribute;
                 }
             });

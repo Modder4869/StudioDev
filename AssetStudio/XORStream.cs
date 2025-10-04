@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 
 namespace AssetStudio
 {
@@ -37,7 +35,7 @@ namespace AssetStudio
     {
         private readonly byte[] _key;
         private readonly int _length;
-        public GF2Stream(Stream stream, byte[] key,int length) : base(stream, 0)
+        public GF2Stream(Stream stream, byte[] key, int length) : base(stream, 0)
         {
             _key = key;
             _length = length;

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace AssetStudio
 {
@@ -494,7 +493,7 @@ namespace AssetStudio
             if (version[0] == 2022 && version[1] >= 2) //2022.2 and up
             {
                 flags = reader.ReadInt32();
-        }
+            }
         }
 
         public YAMLNode ExportYAML(int[] version)

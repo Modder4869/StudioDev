@@ -52,11 +52,11 @@ namespace AssetStudio.GUI
             uvs = JsonConvert.DeserializeObject<Dictionary<string, (bool, int)>>(Properties.Settings.Default.uvs);
 
             texTypeComboBox.SelectedIndex = 0;
-            
+
             if (!string.IsNullOrEmpty(Properties.Settings.Default.texs))
             {
                 texs = JsonConvert.DeserializeObject<Dictionary<string, int>>(Properties.Settings.Default.texs);
-                if (texs.Count > 0 )
+                if (texs.Count > 0)
                 {
                     texNameComboBox.Items.AddRange(texs.Keys.ToArray());
                     texNameComboBox.SelectedIndex = 0;
@@ -255,7 +255,7 @@ namespace AssetStudio.GUI
 
         private void Reset_Click(object sender, EventArgs e)
         {
-            foreach(SettingsProperty settingsProperty in Properties.Settings.Default.Properties)
+            foreach (SettingsProperty settingsProperty in Properties.Settings.Default.Properties)
             {
                 Properties.Settings.Default[settingsProperty.Name] = TypeDescriptor.GetConverter(settingsProperty.PropertyType).ConvertFrom(settingsProperty.DefaultValue);
             }

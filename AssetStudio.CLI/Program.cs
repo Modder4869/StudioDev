@@ -1,13 +1,13 @@
-﻿using System;
+﻿using AssetStudio.CLI.Properties;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using AssetStudio.CLI.Properties;
-using Newtonsoft.Json;
 using static AssetStudio.CLI.Studio;
 
-namespace AssetStudio.CLI 
+namespace AssetStudio.CLI
 {
     public class Program
     {
@@ -59,18 +59,18 @@ namespace AssetStudio.CLI
                         var typeStr = o.TypeFilter[i];
                         var type = ClassIDType.UnknownType;
                         var flag = TypeFlag.Both;
-                    
+
                         try
                         {
                             if (typeStr.Contains(':'))
                             {
                                 var param = typeStr.Split(':');
-                    
+
                                 flag = (TypeFlag)Enum.Parse(typeof(TypeFlag), param[1], true);
-                    
+
                                 typeStr = param[0];
                             }
-                    
+
                             type = (ClassIDType)Enum.Parse(typeof(ClassIDType), typeStr, true);
 
                             if (type == ClassIDType.Texture2D)
@@ -81,12 +81,12 @@ namespace AssetStudio.CLI
                             {
                                 exportMaterial = flag.HasFlag(TypeFlag.Export);
                             }
-                    
+
                             TypeFlags.SetType(type, flag.HasFlag(TypeFlag.Parse), flag.HasFlag(TypeFlag.Export));
-                    
+
                             classTypeFilterList.Add(type);
                         }
-                        catch(Exception e)
+                        catch (Exception e)
                         {
                             Logger.Error($"{typeStr} has invalid format, skipping...");
                             continue;
@@ -106,7 +106,7 @@ namespace AssetStudio.CLI
                         {
                             TypeFlags.SetType(ClassIDType.Animator, true, false);
                         }
-                        else if(ClassIDType.Animator.CanExport())
+                        else if (ClassIDType.Animator.CanExport())
                         {
                             TypeFlags.SetType(ClassIDType.GameObject, true, false);
                         }

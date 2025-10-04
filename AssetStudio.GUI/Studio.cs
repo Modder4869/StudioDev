@@ -294,7 +294,7 @@ namespace AssetStudio.GUI
                             exportable = ClassIDType.AssetBundle.CanExport();
                             break;
                         case IndexObject m_IndexObject:
-                            foreach(var index in m_IndexObject.AssetMap)
+                            foreach (var index in m_IndexObject.AssetMap)
                             {
                                 mihoyoBinDataNames.Add((index.Value.Object, index.Key));
                             }
@@ -334,7 +334,7 @@ namespace AssetStudio.GUI
                     Progress.Report(++i, objectCount);
                 }
             }
-            foreach((var pptr, var name) in mihoyoBinDataNames)
+            foreach ((var pptr, var name) in mihoyoBinDataNames)
             {
                 if (assetsManager.tokenSource.IsCancellationRequested)
                 {
@@ -699,7 +699,7 @@ namespace AssetStudio.GUI
                         }
                         //处理非法文件名
                         var filename = FixFileName(j.Text);
-                        if (node.Parent != null) 
+                        if (node.Parent != null)
                         {
                             filename = Path.Combine(FixFileName(node.Parent.Text), filename);
                         }
@@ -741,7 +741,7 @@ namespace AssetStudio.GUI
 
                 IEnumerable<TreeNode> GetNodes(TreeNodeCollection nodes)
                 {
-                    foreach(TreeNode node in nodes)
+                    foreach (TreeNode node in nodes)
                     {
                         var subNodes = node.Nodes.OfType<TreeNode>().ToArray();
                         if (subNodes.Length == 0)

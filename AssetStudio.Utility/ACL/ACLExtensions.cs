@@ -1,11 +1,11 @@
-﻿using System;
-using ACLLibs;
+﻿using ACLLibs;
+using System;
 
 namespace AssetStudio
 {
     public static class ACLExtensions
     {
-        public static void Process(this ACLClip m_ACLClip, Game game, out float[] values, out float[] times) 
+        public static void Process(this ACLClip m_ACLClip, Game game, out float[] values, out float[] times)
         {
             if (game.Type.IsSRGroup())
             {

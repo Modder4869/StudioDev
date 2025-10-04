@@ -46,7 +46,7 @@ namespace AssetStudio
         }
         private static void BuildBundleMap()
         {
-            foreach(var asset in Instance.Assets)
+            foreach (var asset in Instance.Assets)
             {
                 if (!BundleMap.ContainsKey(asset.Value.Id))
                 {
@@ -54,7 +54,7 @@ namespace AssetStudio
                 }
                 if (Instance.SubAssets.TryGetValue(asset.Key, out var subAssets))
                 {
-                    foreach(var subAsset in subAssets)
+                    foreach (var subAsset in subAssets)
                     {
                         BundleMap[asset.Value.Id].Add(subAsset.PathHashLast, subAsset.Name);
                     }

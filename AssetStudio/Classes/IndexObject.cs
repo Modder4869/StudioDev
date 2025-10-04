@@ -30,5 +30,5 @@ namespace AssetStudio
                 AssetMap.Add(new KeyValuePair<string, Index>(reader.ReadAlignedString(), new Index(reader)));
             }
         }
-    } 
+    }
 }

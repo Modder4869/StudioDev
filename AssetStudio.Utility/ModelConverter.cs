@@ -1,11 +1,9 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
-using System.Collections;
-using System.IO;
 namespace AssetStudio
 {
     public class ModelConverter : IImported
@@ -96,11 +94,11 @@ namespace AssetStudio
             {
                 if (animationList != null)
                 {
-                foreach (var animationClip in animationList)
-                {
-                    animationClipHashSet.Add(animationClip);
+                    foreach (var animationClip in animationList)
+                    {
+                        animationClipHashSet.Add(animationClip);
+                    }
                 }
-            }
             }
             ConvertAnimations();
         }
@@ -760,7 +758,7 @@ namespace AssetStudio
                 if (NN4GO != null)
                 {
                     if (NN4GO.TryGet(out MonoBehaviour NN4SkinnedMeshRendererData))
-                    { 
+                    {
                         var obj = NN4SkinnedMeshRendererData.ToType();
                         if (obj == null)
                         {
@@ -771,10 +769,11 @@ namespace AssetStudio
                         var bones = obj["Bones"] as List<object>;
                         var transforms = meshR.assetsFile.ObjectsDic
                             .Where(kvp => kvp.Value.type == ClassIDType.Transform);
-                            for (int i = 0; i < bones.Count; i++)
-                        {   var NN4Bone = (string)bones[i];
+                        for (int i = 0; i < bones.Count; i++)
+                        {
+                            var NN4Bone = (string)bones[i];
                             var transform = transforms
-                            .Select(kvp => kvp.Value as AssetStudio.Transform) 
+                            .Select(kvp => kvp.Value as AssetStudio.Transform)
                             .FirstOrDefault(obj => obj.m_GameObject.Name.Contains(NN4Bone));
                             if (transform != null)
                             {
@@ -784,15 +783,15 @@ namespace AssetStudio
 
                         }
 
-                    }               
+                    }
                 }
-                    //Bone
-                    /*
-                     * 0 - None
-                     * 1 - m_Bones
-                     * 2 - m_BoneNameHashes
-                     */
-                    var boneType = 0;
+                //Bone
+                /*
+                 * 0 - None
+                 * 1 - m_Bones
+                 * 2 - m_BoneNameHashes
+                 */
+                var boneType = 0;
                 if (sMesh.m_Bones.Count > 0)
                 {
                     if (sMesh.m_Bones.Count == mesh.m_BindPose.Length)
@@ -1537,7 +1536,7 @@ namespace AssetStudio
             public bool exportMaterials;
             public HashSet<Material> materials;
             public Dictionary<string, (bool, int)> uvs;
-            public Dictionary<string, int> texs; 
+            public Dictionary<string, int> texs;
         }
     }
 }

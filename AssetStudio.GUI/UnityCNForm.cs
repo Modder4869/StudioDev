@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Windows.Forms;
 using System.Collections.Generic;
-using AssetStudio;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace AssetStudio.GUI
 {

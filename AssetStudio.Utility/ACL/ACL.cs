@@ -1,6 +1,6 @@
+using AssetStudio.PInvoke;
 using System;
 using System.Runtime.InteropServices;
-using AssetStudio.PInvoke;
 
 namespace ACLLibs
 {

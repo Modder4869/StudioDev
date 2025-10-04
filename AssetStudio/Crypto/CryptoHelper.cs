@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AssetStudio
+﻿namespace AssetStudio
 {
     public static class Crypto
     {

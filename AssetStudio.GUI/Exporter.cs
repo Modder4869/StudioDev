@@ -115,7 +115,7 @@ namespace AssetStudio.GUI
                 switch (m_MiHoYoBinData.Type)
                 {
                     case MiHoYoBinDataType.JSON:
-                        
+
                         if (!TryExportFile(exportPath, item, ".json", out exportFullPath))
                             return false;
                         var json = m_MiHoYoBinData.Dump() as string;
@@ -387,7 +387,7 @@ namespace AssetStudio.GUI
             return true;
         }
 
-        public static bool ExportGameObject(AssetItem item, string exportPath, List <AssetItem> animationList = null)
+        public static bool ExportGameObject(AssetItem item, string exportPath, List<AssetItem> animationList = null)
         {
             if (!TryExportFolder(exportPath, item, out var exportFullPath))
                 return false;

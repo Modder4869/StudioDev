@@ -1,6 +1,5 @@
 ﻿using AssetStudio.FbxInterop;
 using AssetStudio.PInvoke;
-using Newtonsoft.Json.Linq;
 using System.IO;
 
 namespace AssetStudio

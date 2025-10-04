@@ -1,7 +1,6 @@
-﻿using System;
-using SevenZip;
+﻿using SevenZip;
+using System;
 using System.Linq;
-using System.Xml.Linq;
 
 namespace AssetStudio
 {

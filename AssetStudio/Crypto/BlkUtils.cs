@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Buffers.Binary;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AssetStudio
 {
@@ -16,19 +14,16 @@ namespace AssetStudio
             reader.Endian = EndianType.LittleEndian;
 
             var signature = reader.ReadStringToNull();
-            if(Logger.Flags.HasFlag(LoggerEvent.Verbose)){
-			Logger.Verbose($"Signature: {signature}");
-			}
+
+            Logger.Verbose($"Signature: {signature}");
             var count = reader.ReadInt32();
-            if(Logger.Flags.HasFlag(LoggerEvent.Verbose)){
-			Logger.Verbose($"Key size: {count}");
-			}
+
+            Logger.Verbose($"Key size: {count}");
             var key = reader.ReadBytes(count);
             reader.Position += count;
             var seedSize = Math.Min(reader.ReadInt16(), blk.SBox.IsNullOrEmpty() ? SeedBlockSize : SeedBlockSize * 2);
-            if(Logger.Flags.HasFlag(LoggerEvent.Verbose)){
-			Logger.Verbose($"Seed size: 0x{seedSize:X8}");
-			}
+
+            Logger.Verbose($"Seed size: 0x{seedSize:X8}");
 
             if (!blk.SBox.IsNullOrEmpty() && blk.Type.IsGI())
             {
@@ -58,9 +53,8 @@ namespace AssetStudio
             var keyHigh = BinaryPrimitives.ReadUInt64LittleEndian(key.AsSpan(8, 8));
             var seed = keyLow ^ keyHigh ^ keySeed ^ blk.InitSeed;
 
-            if(Logger.Flags.HasFlag(LoggerEvent.Verbose)){
-			Logger.Verbose($"Seed: 0x{seed:X8}");
-			}
+
+            Logger.Verbose($"Seed: 0x{seed:X8}");
 
             var mt64 = new MT19937_64(seed);
             var xorpad = new byte[KeySize];

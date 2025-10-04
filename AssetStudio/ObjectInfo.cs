@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace AssetStudio
+﻿namespace AssetStudio
 {
     public class ObjectInfo
     {

@@ -1,8 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using SevenZip;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
-using SevenZip;
 
 namespace AssetStudio
 {
@@ -533,6 +533,6 @@ namespace AssetStudio
                 return UnknownPathPrefix + hash;
             }
         }
-        
+
     }
 }

@@ -1,35 +1,35 @@
 namespace Smolv
 {
-	public struct OpData
-	{
-		public OpData(byte hasResult, byte hasType, sbyte deltaFromResult, byte varrest)
-		{
-			this.hasResult = hasResult;
-			this.hasType = hasType;
-			this.deltaFromResult = deltaFromResult;
-			this.varrest = varrest;
-		}
+    public struct OpData
+    {
+        public OpData(byte hasResult, byte hasType, sbyte deltaFromResult, byte varrest)
+        {
+            this.hasResult = hasResult;
+            this.hasType = hasType;
+            this.deltaFromResult = deltaFromResult;
+            this.varrest = varrest;
+        }
 
-		/// <summary>
-		/// Does it have result ID?
-		/// </summary>
-		public byte hasResult;
-		/// <summary>
-		/// Does it have type ID?
-		/// </summary>
-		public byte hasType;
-		/// <summary>
-		/// How many words after (optional) type+result to write out as deltas from result?
-		/// </summary>
-		public sbyte deltaFromResult;
-		/// <summary>
-		/// Should the rest of words be written in varint encoding?
-		/// </summary>
-		public byte varrest;
+        /// <summary>
+        /// Does it have result ID?
+        /// </summary>
+        public byte hasResult;
+        /// <summary>
+        /// Does it have type ID?
+        /// </summary>
+        public byte hasType;
+        /// <summary>
+        /// How many words after (optional) type+result to write out as deltas from result?
+        /// </summary>
+        public sbyte deltaFromResult;
+        /// <summary>
+        /// Should the rest of words be written in varint encoding?
+        /// </summary>
+        public byte varrest;
 
-		public static readonly OpData[] SpirvOpData =
-		{
-			new OpData(0, 0, 0, 0), // Nop
+        public static readonly OpData[] SpirvOpData =
+        {
+            new OpData(0, 0, 0, 0), // Nop
 			new OpData(1, 1, 0, 0), // Undef
 			new OpData(0, 0, 0, 0), // SourceContinued
 			new OpData(0, 0, 0, 1), // Source
@@ -361,5 +361,5 @@ namespace Smolv
 			new OpData(0, 0, -2, 1), // MemoryNamedBarrier
 			new OpData(1, 1, 0, 0), // ModuleProcessed
 		};
-	};
+    };
 }

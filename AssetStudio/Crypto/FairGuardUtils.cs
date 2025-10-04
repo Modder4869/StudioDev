@@ -8,18 +8,16 @@ namespace AssetStudio
     {
         public static void Decrypt(Span<byte> bytes)
         {
-            if(Logger.Flags.HasFlag(LoggerEvent.Verbose)){
-			Logger.Verbose($"Attempting to decrypt block with FairGuard encryption...");
-			}
+
+            Logger.Verbose($"Attempting to decrypt block with FairGuard encryption...");
 
             var encryptedOffset = 0;
             var encryptedSize = bytes.Length > 0x500 ? 0x500 : bytes.Length;
 
             if (encryptedSize < 0x20)
             {
-                if(Logger.Flags.HasFlag(LoggerEvent.Verbose)){
-			Logger.Verbose($"block size is less that minimum, skipping...");
-			}
+
+                Logger.Verbose($"block size is less that minimum, skipping...");
                 return;
             }
 
@@ -45,7 +43,7 @@ namespace AssetStudio
             seed = CRC.CalculateDigest(seedBuffer, 0, (uint)seedBuffer.Length);
 
             var key = seedInts[0] ^ seedInts[1] ^ seedInts[2] ^ seedInts[3] ^ seedInts[4] ^ (uint)encryptedSize;
-            
+
             RC4(seedBytes, key);
             var keySeed = CRC.CalculateDigest(seedBytes.ToArray(), 0, (uint)seedBytes.Length);
             var keySeedBytes = BitConverter.GetBytes(keySeed);

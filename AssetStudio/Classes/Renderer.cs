@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace AssetStudio
 {
@@ -135,7 +133,7 @@ namespace AssetStudio
                 {
                     var m_RenderingLayerMask = reader.ReadUInt32();
                 }
-                if(reader.Game.Type.isThreeKingdoms())
+                if (reader.Game.Type.isThreeKingdoms())
                 {
                     var m_ShadowOcclusionMask = reader.ReadUInt64();
                     var m_OccludeeID = reader.ReadUInt32();
@@ -200,23 +198,23 @@ namespace AssetStudio
 
             if (!reader.Game.Type.IsSR() || !HasPrope(reader.serializedType))
             {
-            if (version[0] > 5 || (version[0] == 5 && version[1] >= 4)) //5.4 and up
-            {
-                var m_ProbeAnchor = new PPtr<Transform>(reader);
-                var m_LightProbeVolumeOverride = new PPtr<GameObject>(reader);
-            }
-            else if (version[0] > 3 || (version[0] == 3 && version[1] >= 5)) //3.5 - 5.3
-            {
-                var m_UseLightProbes = reader.ReadBoolean();
-                reader.AlignStream();
-
-                if (version[0] >= 5)//5.0 and up
+                if (version[0] > 5 || (version[0] == 5 && version[1] >= 4)) //5.4 and up
                 {
-                    var m_ReflectionProbeUsage = reader.ReadInt32();
+                    var m_ProbeAnchor = new PPtr<Transform>(reader);
+                    var m_LightProbeVolumeOverride = new PPtr<GameObject>(reader);
                 }
+                else if (version[0] > 3 || (version[0] == 3 && version[1] >= 5)) //3.5 - 5.3
+                {
+                    var m_UseLightProbes = reader.ReadBoolean();
+                    reader.AlignStream();
 
-                var m_LightProbeAnchor = new PPtr<Transform>(reader); //5.0 and up m_ProbeAnchor
-            }
+                    if (version[0] >= 5)//5.0 and up
+                    {
+                        var m_ReflectionProbeUsage = reader.ReadInt32();
+                    }
+
+                    var m_LightProbeAnchor = new PPtr<Transform>(reader); //5.0 and up m_ProbeAnchor
+                }
             }
 
             if (version[0] > 4 || (version[0] == 4 && version[1] >= 3)) //4.3 and up
@@ -232,7 +230,7 @@ namespace AssetStudio
 
                 //SInt16 m_SortingLayer 5.6 and up
                 var m_SortingOrder = reader.ReadInt16();
-                if(reader.Game.Type.IsLoveAndDeepspace() && (reader.serializedType.Match("452B962AFB9E0E6E86A3CB4017CFDB79")|| reader.serializedType.Match("0442BB7C00A446761B11FB547EC15733")))
+                if (reader.Game.Type.IsLoveAndDeepspace() && (reader.serializedType.Match("452B962AFB9E0E6E86A3CB4017CFDB79") || reader.serializedType.Match("0442BB7C00A446761B11FB547EC15733")))
                 {
                     var RuntimeVirtualTexture = new PPtr<Object>(reader);
 
