@@ -706,7 +706,9 @@ namespace AssetStudio
                                 {
                                     OPFPUtils.Decrypt(compressedBytesSpan, reader.FullPath);
                                 }
-
+                                int count = Math.Min(32,compressedBytesSpan.Length);
+                                string hex = BitConverter.ToString(compressedBytesSpan.Slice(0, count).ToArray()).Replace("-", "");
+                                Logger.Verbose($"first bytes of block : {hex}");
                                 var numWrite = LZ4.Instance.Decompress(compressedBytesSpan, uncompressedBytesSpan);
                                 if (numWrite != uncompressedSize)
                                 {
