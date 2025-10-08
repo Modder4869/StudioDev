@@ -56,6 +56,7 @@ namespace AssetStudio.GUI
             allowDuplicates = new System.Windows.Forms.ToolStripMenuItem();
             forceLoadBundle = new System.Windows.Forms.ToolStripMenuItem();
             skipContainer = new System.Windows.Forms.ToolStripMenuItem();
+            skipBuildingTree = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             toolStripMenuItem14 = new System.Windows.Forms.ToolStripMenuItem();
             specifyUnityVersion = new System.Windows.Forms.ToolStripTextBox();
@@ -178,6 +179,7 @@ namespace AssetStudio.GUI
             contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(components);
             copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             exportSelectedAssetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            exportSelectedAssetsAsSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             exportAnimatorwithselectedAnimationClipMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             goToSceneHierarchyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             showOriginalFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -279,7 +281,7 @@ namespace AssetStudio.GUI
             // 
             // optionsToolStripMenuItem
             // 
-            optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { displayAll, multiBundle,toolStripSeparator10, enablePreview, enableModelPreview, modelsOnly, toolStripSeparator11, displayInfo, enableResolveDependencies, allowDuplicates, forceLoadBundle, skipContainer, toolStripSeparator12, toolStripMenuItem14, specifyUnityCNKey, toolStripSeparator13, toolStripMenuItem18, toolStripMenuItem19, showExpOpt });
+            optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { displayAll, multiBundle,toolStripSeparator10, enablePreview, enableModelPreview, modelsOnly, toolStripSeparator11, displayInfo, enableResolveDependencies, allowDuplicates, forceLoadBundle, skipContainer, skipBuildingTree, toolStripSeparator12, toolStripMenuItem14, specifyUnityCNKey, toolStripSeparator13, toolStripMenuItem18, toolStripMenuItem19, showExpOpt });
             optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             optionsToolStripMenuItem.Text = "Options";
@@ -398,6 +400,15 @@ namespace AssetStudio.GUI
             skipContainer.Text = "Skip container recovery";
             skipContainer.ToolTipText = "Skips the container recovery step.\nImproves loading when dealing with a large number of files.";
             skipContainer.CheckedChanged += skipContainer_CheckedChanged;
+            // 
+            // skipContainer
+            // 
+            skipBuildingTree.CheckOnClick = true;
+            skipBuildingTree.Name = "SkipBuildingTree";
+            skipBuildingTree.Size = new System.Drawing.Size(225, 22);
+            skipBuildingTree.Text = "Skip building tree";
+            skipBuildingTree.ToolTipText = "Skips building tree nodes";
+            skipBuildingTree.CheckedChanged += SkipBuildingTree_CheckedChanged;
             // 
             // toolStripSeparator12
             // 
@@ -1385,7 +1396,7 @@ namespace AssetStudio.GUI
             // contextMenuStrip1
             // 
             contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { copyToolStripMenuItem, exportSelectedAssetsToolStripMenuItem, exportAnimatorwithselectedAnimationClipMenuItem, goToSceneHierarchyToolStripMenuItem, showOriginalFileToolStripMenuItem });
+            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { copyToolStripMenuItem, exportSelectedAssetsToolStripMenuItem, exportSelectedAssetsAsSceneToolStripMenuItem, exportAnimatorwithselectedAnimationClipMenuItem, goToSceneHierarchyToolStripMenuItem, showOriginalFileToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
             contextMenuStrip1.Size = new System.Drawing.Size(304, 114);
             // 
@@ -1402,6 +1413,13 @@ namespace AssetStudio.GUI
             exportSelectedAssetsToolStripMenuItem.Size = new System.Drawing.Size(303, 22);
             exportSelectedAssetsToolStripMenuItem.Text = "Export selected assets";
             exportSelectedAssetsToolStripMenuItem.Click += exportSelectedAssetsToolStripMenuItem_Click;
+            // 
+            //exportSelectedAssetsAsSceneToolStripMenuItem
+            //
+            exportSelectedAssetsAsSceneToolStripMenuItem.Name = "exportSelectedAssetsAsSceneToolStripMenuItem";
+            exportSelectedAssetsAsSceneToolStripMenuItem.Size = new System.Drawing.Size(303, 22);
+            exportSelectedAssetsAsSceneToolStripMenuItem.Text = "Export selected GO as Scene";
+            exportSelectedAssetsAsSceneToolStripMenuItem.Click += exportSelectedAssetsAsSceneToolStripMenuItem_Click;
             // 
             // exportAnimatorwithselectedAnimationClipMenuItem
             // 
@@ -1539,6 +1557,7 @@ namespace AssetStudio.GUI
         private System.Windows.Forms.ToolStripMenuItem showOriginalFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportAnimatorwithselectedAnimationClipMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportSelectedAssetsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportSelectedAssetsAsSceneToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem filterTypeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem allToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportSelectedObjectsToolStripMenuItem;
@@ -1614,6 +1633,7 @@ namespace AssetStudio.GUI
         private System.Windows.Forms.ToolStripMenuItem enableModelPreview;
         private System.Windows.Forms.ToolStripMenuItem enableResolveDependencies;
         private System.Windows.Forms.ToolStripMenuItem skipContainer;
+        private System.Windows.Forms.ToolStripMenuItem skipBuildingTree;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator11;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;

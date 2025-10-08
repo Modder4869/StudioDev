@@ -76,6 +76,12 @@ namespace AssetStudio
             if (FileLogging) File.Log(LoggerEvent.Info, message);
             Default.Log(LoggerEvent.Info, message);
         }
+        public static void Perf(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(message);
+            Console.ResetColor();
+        }
         public static void Warning(string message)
         {
             if ((Flags & LoggerEvent.Warning) == 0 || Silent)

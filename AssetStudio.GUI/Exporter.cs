@@ -5,11 +5,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace AssetStudio.GUI
 {
     internal static class Exporter
     {
+        public static bool exportScene { get; set; }
         public static bool ExportTexture2D(AssetItem item, string exportPath)
         {
             var m_Texture2D = (Texture2D)item.Asset;
@@ -386,13 +388,97 @@ namespace AssetStudio.GUI
             ExportFbx(convert, exportFullPath);
             return true;
         }
+        public static GameObject ProcessGameObjectHierarchy(GameObject currentObject)
+        {
+            //if (currentObject.assetsFile.fileName.Contains("BuildPlayer-"))
+            //{
+            //    return null;
+            //}
+            if (currentObject?.m_Transform?.m_Father != null)
+            {
+                if (currentObject.m_Transform.m_Father.TryGet(out var m_Father))
+                {
 
+                    if (m_Father.m_GameObject.TryGet(out var parentGameObject))
+                    {
+                        return ProcessGameObjectHierarchy(parentGameObject);
+                    }
+
+                }
+                return currentObject;
+            }
+
+
+
+            return null;
+        }
+        public static List<GameObject> GetParentFromCAB(GameObject currentObject)
+        {
+            var gameObjectsList = new List<GameObject>();
+            // Process objects if no parent or reached the top of the hierarchy
+            if (currentObject.assetsFile.fileName.Contains("BuildPlayer-"))
+            {
+                gameObjectsList = currentObject.assetsFile.Objects
+                    .Where(x => x.type == ClassIDType.GameObject && Regex.IsMatch(x.Name, @"(Program|Env|Stage)Root")).Cast<GameObject>().ToList();
+
+                //foreach (var obj in gameObjects)
+                //{
+                //    bool hasParent = false;
+                //    var gameObject = (GameObject)obj;
+                //    if (currentObject?.m_Transform?.m_Father != null)
+                //    {
+                //        if (currentObject.m_Transform.m_Father.TryGet(out var m_Father))
+                //        {
+                //            if (m_Father.m_GameObject.TryGet(out var parentGameObject))
+                //            {
+                //                if (parentGameObject.HasModel())
+                //                {
+                //                    hasParent = true;
+                //                }
+                //                continue;
+
+                //            }
+                //        }
+                //    }
+                //    if (hasParent)
+                //    {
+                //        Console.WriteLine("Processing child object: " + gameObject.Name);
+                //        gameObjectsList.Add(gameObject);
+                //    }
+                //}
+            }
+            return gameObjectsList;
+        }
         public static bool ExportGameObject(AssetItem item, string exportPath, List<AssetItem> animationList = null)
         {
             if (!TryExportFolder(exportPath, item, out var exportFullPath))
                 return false;
 
             var m_GameObject = (GameObject)item.Asset;
+            if (exportScene)
+            {
+                var parent = ProcessGameObjectHierarchy(m_GameObject);
+                if (parent == null)
+                {
+                    Logger.Info($"something went wrong processing {item.Asset.Name} parent");
+                    //var goList = GetParentFromCAB(m_GameObject);
+                    //if (goList.Count > 0)
+                    //{
+                    //    Logger.Info($"assuming BuildPLayer and Exporting known root for {item.Asset.Name}");
+                    //    var testPathv = exportPath.Replace("\\GameObject", "") + Path.DirectorySeparatorChar + goList[0].assetsFile.fileName + Path.DirectorySeparatorChar + goList[0].assetsFile.fileName + "_merged" + ".fbx";
+                    //    var outputName = goList[0].Name;
+                    //    var fileName = FixFileName(outputName);
+                    //    var fullPath = Path.Combine(exportPath, fileName);
+                    //    ExportGameObjectMerge(goList, testPathv, animationList);
+                    //}
+                    return true;
+                }
+                else
+                {
+                    Logger.Info($"found parent {parent.Name} for GO {item.Asset.Name}");
+                    return ExportGameObject(parent, exportPath + Path.DirectorySeparatorChar + parent.Name + Path.DirectorySeparatorChar, animationList);
+                }
+            }
             return ExportGameObject(m_GameObject, exportFullPath + Path.DirectorySeparatorChar, animationList);
         }
 

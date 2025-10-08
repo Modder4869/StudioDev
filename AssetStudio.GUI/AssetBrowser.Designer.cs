@@ -62,19 +62,21 @@ namespace AssetStudio.GUI
             tableLayoutPanel2.Controls.Add(clear, 1, 0);
             tableLayoutPanel2.Controls.Add(loadSelected, 2, 0);
             tableLayoutPanel2.Controls.Add(exportSelected, 3, 0);
-            tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
+            tableLayoutPanel2.Location = new System.Drawing.Point(3, 4);
+            tableLayoutPanel2.Margin = new Padding(3, 4, 3, 4);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel2.Size = new System.Drawing.Size(518, 29);
+            tableLayoutPanel2.Size = new System.Drawing.Size(593, 39);
             tableLayoutPanel2.TabIndex = 3;
             // 
             // loadAssetMap
             // 
             loadAssetMap.Dock = DockStyle.Fill;
-            loadAssetMap.Location = new System.Drawing.Point(3, 3);
+            loadAssetMap.Location = new System.Drawing.Point(3, 4);
+            loadAssetMap.Margin = new Padding(3, 4, 3, 4);
             loadAssetMap.Name = "loadAssetMap";
-            loadAssetMap.Size = new System.Drawing.Size(114, 23);
+            loadAssetMap.Size = new System.Drawing.Size(132, 31);
             loadAssetMap.TabIndex = 0;
             loadAssetMap.Text = "Load AssetMap";
             loadAssetMap.UseVisualStyleBackColor = true;
@@ -83,9 +85,10 @@ namespace AssetStudio.GUI
             // clear
             // 
             clear.Dock = DockStyle.Fill;
-            clear.Location = new System.Drawing.Point(123, 3);
+            clear.Location = new System.Drawing.Point(141, 4);
+            clear.Margin = new Padding(3, 4, 3, 4);
             clear.Name = "clear";
-            clear.Size = new System.Drawing.Size(54, 23);
+            clear.Size = new System.Drawing.Size(63, 31);
             clear.TabIndex = 1;
             clear.Text = "Clear";
             clear.UseVisualStyleBackColor = true;
@@ -94,9 +97,10 @@ namespace AssetStudio.GUI
             // loadSelected
             // 
             loadSelected.Dock = DockStyle.Fill;
-            loadSelected.Location = new System.Drawing.Point(183, 3);
+            loadSelected.Location = new System.Drawing.Point(210, 4);
+            loadSelected.Margin = new Padding(3, 4, 3, 4);
             loadSelected.Name = "loadSelected";
-            loadSelected.Size = new System.Drawing.Size(114, 23);
+            loadSelected.Size = new System.Drawing.Size(132, 31);
             loadSelected.TabIndex = 2;
             loadSelected.Text = "Load Selected";
             loadSelected.UseVisualStyleBackColor = true;
@@ -105,9 +109,10 @@ namespace AssetStudio.GUI
             // exportSelected
             // 
             exportSelected.Dock = DockStyle.Fill;
-            exportSelected.Location = new System.Drawing.Point(303, 3);
+            exportSelected.Location = new System.Drawing.Point(348, 4);
+            exportSelected.Margin = new Padding(3, 4, 3, 4);
             exportSelected.Name = "exportSelected";
-            exportSelected.Size = new System.Drawing.Size(212, 23);
+            exportSelected.Size = new System.Drawing.Size(242, 31);
             exportSelected.TabIndex = 3;
             exportSelected.Text = "Export Selected";
             exportSelected.UseVisualStyleBackColor = true;
@@ -120,11 +125,12 @@ namespace AssetStudio.GUI
             assetDataGridView.AllowUserToResizeRows = false;
             assetDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             assetDataGridView.Dock = DockStyle.Fill;
-            assetDataGridView.Location = new System.Drawing.Point(3, 73);
+            assetDataGridView.Location = new System.Drawing.Point(3, 98);
+            assetDataGridView.Margin = new Padding(3, 4, 3, 4);
             assetDataGridView.Name = "assetDataGridView";
             assetDataGridView.ReadOnly = true;
             assetDataGridView.RowTemplate.Height = 25;
-            assetDataGridView.Size = new System.Drawing.Size(518, 263);
+            assetDataGridView.Size = new System.Drawing.Size(593, 351);
             assetDataGridView.TabIndex = 2;
             assetDataGridView.VirtualMode = true;
             assetDataGridView.CellValueNeeded += AssetDataGridView_CellValueNeeded;
@@ -138,13 +144,14 @@ namespace AssetStudio.GUI
             tableLayoutPanel1.Controls.Add(assetDataGridView, 0, 2);
             tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 0, 0);
             tableLayoutPanel1.Controls.Add(tableLayoutPanel3, 0, 1);
-            tableLayoutPanel1.Location = new System.Drawing.Point(12, 12);
+            tableLayoutPanel1.Location = new System.Drawing.Point(14, 16);
+            tableLayoutPanel1.Margin = new Padding(3, 4, 3, 4);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 3;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 47F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 47F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.Size = new System.Drawing.Size(524, 333);
+            tableLayoutPanel1.Size = new System.Drawing.Size(599, 444);
             tableLayoutPanel1.TabIndex = 3;
             // 
             // tableLayoutPanel3
@@ -161,69 +168,76 @@ namespace AssetStudio.GUI
             tableLayoutPanel3.Controls.Add(containerTextBox, 0, 0);
             tableLayoutPanel3.Controls.Add(typeTextBox, 4, 0);
             tableLayoutPanel3.Dock = DockStyle.Fill;
-            tableLayoutPanel3.Location = new System.Drawing.Point(3, 38);
+            tableLayoutPanel3.Location = new System.Drawing.Point(3, 51);
+            tableLayoutPanel3.Margin = new Padding(3, 4, 3, 4);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 1;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel3.Size = new System.Drawing.Size(518, 29);
+            tableLayoutPanel3.Size = new System.Drawing.Size(593, 39);
             tableLayoutPanel3.TabIndex = 4;
             // 
             // sourceTextBox
             // 
             sourceTextBox.Dock = DockStyle.Fill;
-            sourceTextBox.Location = new System.Drawing.Point(209, 3);
+            sourceTextBox.Location = new System.Drawing.Point(239, 4);
+            sourceTextBox.Margin = new Padding(3, 4, 3, 4);
             sourceTextBox.Name = "sourceTextBox";
             sourceTextBox.PlaceholderText = "Source";
-            sourceTextBox.Size = new System.Drawing.Size(97, 23);
+            sourceTextBox.Size = new System.Drawing.Size(112, 27);
             sourceTextBox.TabIndex = 6;
             sourceTextBox.KeyPress += SourceTextBox_KeyPress;
             // 
             // pathTextBox
             // 
             pathTextBox.Dock = DockStyle.Fill;
-            pathTextBox.Location = new System.Drawing.Point(312, 3);
+            pathTextBox.Location = new System.Drawing.Point(357, 4);
+            pathTextBox.Margin = new Padding(3, 4, 3, 4);
             pathTextBox.Name = "pathTextBox";
             pathTextBox.PlaceholderText = "PathID";
-            pathTextBox.Size = new System.Drawing.Size(97, 23);
+            pathTextBox.Size = new System.Drawing.Size(112, 27);
             pathTextBox.TabIndex = 7;
             pathTextBox.KeyPress += PathTextBox_KeyPress;
             // 
             // nameTextBox
             // 
             nameTextBox.Dock = DockStyle.Fill;
-            nameTextBox.Location = new System.Drawing.Point(3, 3);
+            nameTextBox.Location = new System.Drawing.Point(3, 4);
+            nameTextBox.Margin = new Padding(3, 4, 3, 4);
             nameTextBox.Name = "nameTextBox";
             nameTextBox.PlaceholderText = "Name";
-            nameTextBox.Size = new System.Drawing.Size(97, 23);
+            nameTextBox.Size = new System.Drawing.Size(112, 27);
             nameTextBox.TabIndex = 4;
             nameTextBox.KeyPress += NameTextBox_KeyPress;
             // 
             // containerTextBox
             // 
             containerTextBox.Dock = DockStyle.Fill;
-            containerTextBox.Location = new System.Drawing.Point(106, 3);
+            containerTextBox.Location = new System.Drawing.Point(121, 4);
+            containerTextBox.Margin = new Padding(3, 4, 3, 4);
             containerTextBox.Name = "containerTextBox";
             containerTextBox.PlaceholderText = "Container";
-            containerTextBox.Size = new System.Drawing.Size(97, 23);
+            containerTextBox.Size = new System.Drawing.Size(112, 27);
             containerTextBox.TabIndex = 5;
             containerTextBox.KeyPress += ContainerTextBox_KeyPress;
             // 
             // typeTextBox
             // 
             typeTextBox.Dock = DockStyle.Fill;
-            typeTextBox.Location = new System.Drawing.Point(415, 3);
+            typeTextBox.Location = new System.Drawing.Point(475, 4);
+            typeTextBox.Margin = new Padding(3, 4, 3, 4);
             typeTextBox.Name = "typeTextBox";
             typeTextBox.PlaceholderText = "Type";
-            typeTextBox.Size = new System.Drawing.Size(100, 23);
+            typeTextBox.Size = new System.Drawing.Size(115, 27);
             typeTextBox.TabIndex = 8;
             typeTextBox.KeyPress += TypeTextBox_KeyPress;
             // 
             // AssetBrowser
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(548, 357);
+            ClientSize = new System.Drawing.Size(626, 476);
             Controls.Add(tableLayoutPanel1);
+            Margin = new Padding(3, 4, 3, 4);
             Name = "AssetBrowser";
             ShowIcon = false;
             StartPosition = FormStartPosition.CenterScreen;

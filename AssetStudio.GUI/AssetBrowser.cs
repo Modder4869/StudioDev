@@ -113,6 +113,7 @@ namespace AssetStudio.GUI
                         toExportAssets.Clear();
                         assetsManager.Clear();
                     }
+                    AssetStudio.GUI.Exporter.exportScene = false;
                 });
                 StatusStripUpdate = statusStripUpdate;
             }
@@ -395,9 +396,9 @@ namespace AssetStudio.GUI
             assetDataGridView.Columns.Clear();
             _assetEntries.Clear();
             Logger.Info($"Total AssetEntries.. {_assetEntries.Count()}");
-            GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, true, true);
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
+           GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, true, true);
+          GC.WaitForPendingFinalizers();
+          GC.Collect();
         }
     }
 }

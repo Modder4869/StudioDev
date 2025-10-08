@@ -382,7 +382,21 @@ namespace AssetStudio.GUI.Properties {
                 this["skipContainer"] = value;
             }
         }
-        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool skipBuildingTree
+        {
+            get
+            {
+                return ((bool)(this["skipBuildingTree"]));
+            }
+            set
+            {
+                this["skipBuildingTree"] = value;
+            }
+        }
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]

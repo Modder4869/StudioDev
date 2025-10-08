@@ -25,6 +25,7 @@ namespace AssetStudio.GUI
     {
         public static Game Game;
         public static bool SkipContainer = false;
+        public static bool SkipBuildingTree = false;
         public static AssetsManager assetsManager = new AssetsManager();
         public static AssemblyLoader assemblyLoader = new AssemblyLoader();
         public static List<AssetItem> exportableAssets = new List<AssetItem>();
@@ -383,13 +384,18 @@ namespace AssetStudio.GUI
             }
 
             visibleAssets = exportableAssets;
-
+            if (SkipBuildingTree)
+            {
+                StatusStripUpdate("skipping Building tree structure...");
+                return (productName,new List<TreeNode>());
+            }
             StatusStripUpdate("Building tree structure...");
-
+   
             var treeNodeCollection = new List<TreeNode>();
             var treeNodeDictionary = new Dictionary<GameObject, GameObjectTreeNode>();
             int j = 0;
-            Progress.Reset();
+        
+                    Progress.Reset();
             var files = assetsManager.assetsFileList.GroupBy(x => x.originalPath ?? string.Empty).OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.ToList());
             foreach (var (file, assetsFiles) in files)
             {
@@ -484,6 +490,7 @@ namespace AssetStudio.GUI
             objectAssetItemDic.Clear();
 
             return (productName, treeNodeCollection);
+
         }
 
         public static Dictionary<string, SortedDictionary<int, TypeTreeItem>> BuildClassStructure()

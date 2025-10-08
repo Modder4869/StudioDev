@@ -281,6 +281,8 @@ namespace AssetStudio.GUI
 
         private async void BuildAssetStructures()
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
             if (assetsManager.assetsFileList.Count == 0)
             {
                 StatusStripUpdate("No Unity file can be loaded.");
@@ -352,6 +354,9 @@ namespace AssetStudio.GUI
                 log += $" and {m_ObjectsCount - objectsCount} assets failed to read";
             }
             StatusStripUpdate(log);
+            stopwatch.Stop();
+           Logger.Perf($"BuildAssetStructures completed in {stopwatch.Elapsed.TotalSeconds:F2} seconds.");
+
         }
 
         private void typeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1598,6 +1603,12 @@ namespace AssetStudio.GUI
         {
             ExportAssets(ExportFilter.Selected, ExportType.Convert);
         }
+        private void exportSelectedAssetsAsSceneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AssetStudio.GUI.Exporter.exportScene = true;
+            ExportAssets(ExportFilter.Selected, ExportType.Convert);
+
+        }
 
         private void showOriginalFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -2052,6 +2063,7 @@ RegexOptions.Compiled
                             break;
                     }
                     await Studio.ExportAssets(saveFolderDialog.Folder, toExportAssets, exportType, Properties.Settings.Default.openAfterExport);
+                    AssetStudio.GUI.Exporter.exportScene = false;
                 }
             }
             else
@@ -2235,6 +2247,13 @@ RegexOptions.Compiled
             Properties.Settings.Default.Save();
 
             SkipContainer = skipContainer.Checked;
+        }
+        private void SkipBuildingTree_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.skipBuildingTree = skipBuildingTree.Checked;
+            Properties.Settings.Default.Save();
+
+            SkipBuildingTree = skipBuildingTree.Checked;
         }
         private void assetMapTypeMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {

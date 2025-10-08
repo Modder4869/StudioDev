@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -45,7 +46,7 @@ namespace AssetStudio
                 Logger.Silent = true;
                 Progress.Silent = true;
             }
-
+     
             var path = Path.GetDirectoryName(Path.GetFullPath(files[0]));
             MergeSplitAssets(path);
             var toReadFile = ProcessingSplitFiles(files.ToList());
@@ -62,6 +63,7 @@ namespace AssetStudio
                 Logger.Silent = false;
                 Progress.Silent = false;
             }
+
         }
 
 
@@ -88,6 +90,9 @@ namespace AssetStudio
 
         private void Load(string[] files)
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             foreach (var file in files)
             {
 
@@ -123,12 +128,14 @@ namespace AssetStudio
             assetsFileListHash.Clear();
             PathIDsByObjectCache = null;
             AssetsHelper.ClearOffsets();
-
+            Logger.Perf($"LoadFiles completed in {stopwatch.Elapsed.TotalSeconds:F2} seconds.");
             if (!SkipProcess)
             {
                 ReadAssets();
                 ProcessAssets();
             }
+            Logger.Perf($"ProcessAssets completed in {stopwatch.Elapsed.TotalSeconds:F2} seconds.");
+
         }
         private void LoadFile(string fullName)
         {
