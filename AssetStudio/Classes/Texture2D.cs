@@ -69,6 +69,7 @@
         private static bool HasExternalMipRelativeOffset(SerializedType type) => type.Match("1D52BB98AA5F54C67C22C39E8B2E400F", "5390A985F58D5524F95DB240E8789704");
         public Texture2D(ObjectReader reader) : base(reader)
         {
+            if (version[0] > 2023)
             m_Width = reader.ReadInt32();
             m_Height = reader.ReadInt32();
             var m_CompleteImageSize = reader.ReadInt32();
@@ -101,7 +102,8 @@
             {
                 var m_IgnoreMasterTextureLimit = reader.ReadBoolean();
             }
-            if (version[0] == 2022 && version[1] >= 2) //2022.2 and up
+
+            if (version[0] > 2022 || (version[0] == 2022 && version[1] >= 2)) //2022.2 and up
             {
                 reader.AlignStream(); //m_IgnoreMipmapLimit
                 var m_MipmapLimitGroupName = reader.ReadAlignedString();
