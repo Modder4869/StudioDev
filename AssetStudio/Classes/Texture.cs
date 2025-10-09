@@ -6,8 +6,11 @@
         {
             if (version[0] > 2017 || (version[0] == 2017 && version[1] >= 3)) //2017.3 and up
             {
-                var m_ForcedFallbackFormat = reader.ReadInt32();
-                var m_DownscaleFallback = reader.ReadBoolean();
+                if (version[0] < 2023)
+                {
+                    var m_ForcedFallbackFormat = reader.ReadInt32();
+                    var m_DownscaleFallback = reader.ReadBoolean();
+                }
                 if (version[0] > 2020 || (version[0] == 2020 && version[1] >= 2)) //2020.2 and up
                 {
                     var m_IsAlphaChannelOptional = reader.ReadBoolean();
