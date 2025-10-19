@@ -2300,7 +2300,12 @@ RegexOptions.Compiled
 
             Studio.Game = GameManager.GetGame(Properties.Settings.Default.selectedGame);
             Logger.Info($"Target Game is {Studio.Game.Name}");
+            if (Studio.Game.Type == GameType.OPBR)
+            {
+                Studio.Game.Callback = GameHandler.HandleOPBR; // method matches Action<Game>
 
+                Studio.Game.Callback?.Invoke(Studio.Game);
+            }
             if (Studio.Game.Type.IsUnityCN())
             {
                 UnityCNManager.SetKey(Properties.Settings.Default.selectedUnityCNKey);
