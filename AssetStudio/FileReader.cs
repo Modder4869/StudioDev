@@ -207,6 +207,9 @@ namespace AssetStudio
                     case GameType.ShiningNikki:
                         reader = ParseFakeHeader(reader);
                         break;
+                    case GameType.OPBR:
+                        reader = DecryptOnePieceBountyRush(reader,game);
+                        break;
                     case GameType.FantasyOfWind:
                         reader = DecryptFantasyOfWind(reader);
                         break;

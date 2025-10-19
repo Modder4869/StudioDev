@@ -31,6 +31,7 @@ namespace AssetStudio
             Games.Add(index++, new Game(GameType.Naraka));
             Games.Add(index++, new Game(GameType.EnsembleStars));
             Games.Add(index++, new Game(GameType.OPFP));
+            Games.Add(index++, new Game(GameType.OPBR));
             Games.Add(index++, new Game(GameType.FakeHeader));
             Games.Add(index++, new Game(GameType.FantasyOfWind));
             Games.Add(index++, new Game(GameType.ShiningNikki));
@@ -63,6 +64,9 @@ namespace AssetStudio
             Games.Add(index++, new Game(GameType.EOS));
 
         }
+
+
+       
         public static Game GetGame(GameType gameType) => GetGame((int)gameType);
         public static Game GetGame(int index)
         {
@@ -85,7 +89,8 @@ namespace AssetStudio
         public string Name { get; set; }
         public GameType Type { get; }
         public string Ext { get; set; }
-
+        public Action<Game>? Callback { get; set; } 
+        public object? Data { get; set; }
         public Game(GameType type)
         {
             Name = type.ToString();
@@ -170,6 +175,7 @@ namespace AssetStudio
         Naraka,
         EnsembleStars,
         OPFP,
+        OPBR,
         FakeHeader,
         FantasyOfWind,
         ShiningNikki,
