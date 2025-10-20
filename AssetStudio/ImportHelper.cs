@@ -1607,47 +1607,5 @@ namespace AssetStudio
             return new FileReader(reader.FullPath, ms);
 
         }
-        public static FileReader DecryptOnePieceBountyRush(FileReader reader, Game game)
-        {
-            var key = 0x8515639E5BAD9DEF;
-            var dict = (Dictionary<string, (string originalName, string ifEncrypt)>)game.Data;
-            string encName = reader.FileName;
-            var data = reader.ReadBytes((int)reader.Remaining);
-            if (dict.TryGetValue(encName, out var value))
-            {
-                Console.WriteLine($"Found key {key}: Name={value.originalName}, Encrypt={value.ifEncrypt}");
-                var name = value.originalName;
-                var buffer = new byte[8];
-                var len = Math.Min(buffer.Length, name.Length);
-                Encoding.UTF8.GetBytes(name, 0, len, buffer, 0);
-
-                key ^= BinaryPrimitives.ReadUInt64LittleEndian(buffer);
-
-               
-                var dataLongSpan = MemoryMarshal.Cast<byte, ulong>(data);
-
-                var blockCount = data.Length / 8;
-                var blockIndex = (int)(key & 0xF) + 1;
-
-                ulong hash = 0;
-                while (blockIndex < blockCount)
-                {
-                    var s = key ^ (key << 13);
-                    var g = s ^ (s >> 7);
-                    var l = dataLongSpan[blockIndex] ^ key;
-                    dataLongSpan[blockIndex] = l;
-                    blockIndex += (int)(g & 0xF) + 1;
-                    hash ^= l;
-                    key = g ^ (g << 17);
-                }
-
-              
-            }
-            MemoryStream ms = new();
-            ms.Write(data);
-            ms.Position = 0;
-            return new FileReader(reader.FullPath, ms);
-
-        }
     }
 }
