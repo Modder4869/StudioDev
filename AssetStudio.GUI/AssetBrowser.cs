@@ -118,6 +118,11 @@ namespace AssetStudio.GUI
                 StatusStripUpdate = statusStripUpdate;
             }
         }
+        private async void exportSelectedAsScene_Click(object sender, EventArgs e)
+        {
+            AssetStudio.GUI.Exporter.exportScene = true;
+            exportSelected_Click(sender, e);
+        }
         private void BuildAssetData(List<AssetItem> exportableAssets, AssetEntry[] entries)
         {
             var objectAssetItemDic = new Dictionary<Object, AssetItem>();
