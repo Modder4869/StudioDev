@@ -276,6 +276,9 @@ namespace AssetStudio
                     case GameType.EOS:
                         reader = DecryptEOS(reader);
                         break;
+                    case GameType.InfinityKingdom:
+                        reader = DecryptInfinityKingdom(reader);
+                        break;
 
                 }
             }

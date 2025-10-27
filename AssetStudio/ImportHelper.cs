@@ -1507,8 +1507,54 @@ namespace AssetStudio
             return new FileReader(reader.FullPath, ms);
 
 
-
         }
+    public static FileReader DecryptInfinityKingdom(FileReader reader)
+        {
+            byte[] fileData = reader.ReadBytes((int)reader.Length);
+            long fileLength = fileData.Length;
+
+            // Detect Unity bundle header ("Unity") — skip if already decrypted
+            bool looksLikeUnity =
+                fileData.Length >= 5 &&
+                fileData[0] == 'U' && fileData[1] == 'n' &&
+                fileData[2] == 'i' && fileData[3] == 't' &&
+                fileData[4] == 'y';
+
+            if (looksLikeUnity)
+                return reader;
+            byte[] funnyShifts = Convert.FromHexString(
+                "514E8C396999863B76CA43A562A2EFEE0C94DDED5C1721FE22F86C873FDA2ED3FA3B85537FF3C12245DDD8A73ED7AAE51CDD29215FA3BAB1B50259AA2AC671B6F496669CF4E4C801BEE66966004AC3270B70122D50E41012234A5C2B477378BBE686806837E7CAB9B2E082C0904B3B2A688FEBBA603E0FF679C4641C0ED937CAF75CF26D4543F4111806083A1D7727B8B7B2DB222659A83FD06DEE8BBB78A1FE56B26E850854868006F93D71B03375877EB13B91E6F7E6C6CCBAC9A9AB67ED87736BED246D2FB7590CC973BBA9DF26979C86231EA23BC5B7E6B788148EC580922F803518A39F35D6A3BB1434E0957BDD562F4F6435282EF3E54BF65FC4D3D8B4");
+
+            long position = 0;
+            bool encrypted = true;
+
+            while (position < fileLength)
+            {
+                int count = (int)Math.Min(4096, fileLength - position);
+                long pos = position;
+                long keyOffset = pos + fileLength;
+
+                int decryptLength = (int)Math.Min(count, 2020);
+                long start = pos - decryptLength;
+
+                if (start < 0 && encrypted)
+                {
+                    for (int i = 0; i < -start; i++)
+                    {
+                        int shiftIndex = (int)(keyOffset % funnyShifts.Length);
+                        keyOffset++;
+                        fileData[i + (int)position] ^= funnyShifts[shiftIndex];
+                    }
+                }
+
+                position += count;
+            }
+
+            MemoryStream ms = new(fileData, writable: false);
+            return new FileReader(reader.FullPath, ms);
+        }
+
+
         public static FileReader DecryptThreeKingdoms(FileReader reader)
         {
 

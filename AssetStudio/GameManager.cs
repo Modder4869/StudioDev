@@ -63,6 +63,7 @@ namespace AssetStudio
             Games.Add(index++, new Game(GameType.BLR3));
             Games.Add(index++, new Game(GameType.Metallopus));
             Games.Add(index++, new Game(GameType.EOS));
+            Games.Add(index++, new Game(GameType.InfinityKingdom));
 
         }
 
@@ -207,7 +208,8 @@ namespace AssetStudio
         ThreeKingdoms,
         BLR3,
         Metallopus,
-        EOS
+        EOS,
+        InfinityKingdom,
     }
 
     public static class GameTypes
