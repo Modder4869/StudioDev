@@ -1599,7 +1599,7 @@ namespace AssetStudio
                         key = g ^ (g << 17);
                     }
                 }
-              
+
             }
             MemoryStream ms = new();
             ms.Write(data);

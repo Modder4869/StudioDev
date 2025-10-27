@@ -12,14 +12,14 @@ namespace AssetStudio
         public void AddDocument(YAMLDocument document)
         {
 #if DEBUG
-			if (document == null)
-			{
-				throw new ArgumentNullException(nameof(document));
-			}
-			if (m_documents.Contains(document))
-			{
-				throw new ArgumentException($"Document {document} is added already", nameof(document));
-			}
+            if (document == null)
+            {
+                throw new ArgumentNullException(nameof(document));
+            }
+            if (m_documents.Contains(document))
+            {
+                throw new ArgumentException($"Document {document} is added already", nameof(document));
+            }
 #endif
             m_documents.Add(document);
         }

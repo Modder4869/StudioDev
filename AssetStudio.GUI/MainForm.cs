@@ -355,7 +355,7 @@ namespace AssetStudio.GUI
             }
             StatusStripUpdate(log);
             stopwatch.Stop();
-           Logger.Perf($"BuildAssetStructures completed in {stopwatch.Elapsed.TotalSeconds:F2} seconds.");
+            Logger.Perf($"BuildAssetStructures completed in {stopwatch.Elapsed.TotalSeconds:F2} seconds.");
 
         }
 

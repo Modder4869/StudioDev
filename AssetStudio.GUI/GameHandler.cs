@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Security.Cryptography;
 using System.Windows.Forms;
 namespace AssetStudio.GUI
 {
@@ -63,7 +63,7 @@ namespace AssetStudio.GUI
             //{
             //    Console.WriteLine($"Key {key} not found in dictionary.");
             //}
-            
+
         }
 
         // Helper: compute MD5 hash of a string

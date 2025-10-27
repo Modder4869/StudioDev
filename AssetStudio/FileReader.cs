@@ -208,7 +208,7 @@ namespace AssetStudio
                         reader = ParseFakeHeader(reader);
                         break;
                     case GameType.OPBR:
-                        reader = DecryptOnePieceBountyRush(reader,game);
+                        reader = DecryptOnePieceBountyRush(reader, game);
                         break;
                     case GameType.FantasyOfWind:
                         reader = DecryptFantasyOfWind(reader);

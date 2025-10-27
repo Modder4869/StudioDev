@@ -46,7 +46,7 @@ namespace AssetStudio
                 Logger.Silent = true;
                 Progress.Silent = true;
             }
-     
+
             var path = Path.GetDirectoryName(Path.GetFullPath(files[0]));
             MergeSplitAssets(path);
             var toReadFile = ProcessingSplitFiles(files.ToList());

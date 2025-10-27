@@ -28,6 +28,7 @@ namespace AssetStudio
             Games.Add(index++, new Mr0k(GameType.ZZZ_CB1, Mr0kExpansionKey, initVector: Mr0kInitVector, blockKey: Mr0kBlockKey));
             Games.Add(index++, new Mr0k(GameType.TOT, Mr0kExpansionKey, initVector: Mr0kInitVector, blockKey: Mr0kBlockKey, postKey: ToTKey));
             Games.Add(index++, new Game(GameType.GGZ));
+            Games.Add(index++, new Game(GameType.GGZV2));
             Games.Add(index++, new Game(GameType.Naraka));
             Games.Add(index++, new Game(GameType.EnsembleStars));
             Games.Add(index++, new Game(GameType.OPFP));
@@ -66,7 +67,7 @@ namespace AssetStudio
         }
 
 
-       
+
         public static Game GetGame(GameType gameType) => GetGame((int)gameType);
         public static Game GetGame(int index)
         {
@@ -89,7 +90,7 @@ namespace AssetStudio
         public string Name { get; set; }
         public GameType Type { get; }
         public string Ext { get; set; }
-        public Action<Game>? Callback { get; set; } 
+        public Action<Game>? Callback { get; set; }
         public object? Data { get; set; }
         public Game(GameType type)
         {
@@ -172,6 +173,7 @@ namespace AssetStudio
         SR,
         TOT,
         GGZ,
+        GGZV2,
         Naraka,
         EnsembleStars,
         OPFP,
@@ -228,6 +230,7 @@ namespace AssetStudio
         public static bool IsSR(this GameType type) => type == GameType.SR;
         public static bool IsTOT(this GameType type) => type == GameType.TOT;
         public static bool IsGGZ(this GameType type) => type == GameType.GGZ;
+        public static bool IsGGZV2(this GameType type) => type == GameType.GGZV2;
         public static bool IsNaraka(this GameType type) => type == GameType.Naraka;
         public static bool IsOPFP(this GameType type) => type == GameType.OPFP;
         public static bool IsNetEase(this GameType type) => type == GameType.NetEase;
