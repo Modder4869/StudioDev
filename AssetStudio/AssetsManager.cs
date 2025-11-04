@@ -725,6 +725,7 @@ namespace AssetStudio
                             .AppendLine($"Path {assetsFile.originalPath}")
                             .AppendLine($"Type {objectReader.type}")
                             .AppendLine($"PathID {objectInfo.m_PathID}")
+                            .AppendLine($"Hash {Convert.ToHexString(objectReader.serializedType.m_OldTypeHash)}")
                             .Append(e);
                         Logger.Error(sb.ToString());
                     }

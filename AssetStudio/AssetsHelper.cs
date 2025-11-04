@@ -556,7 +556,7 @@ namespace AssetStudio
                             .AppendLine($"Assets {assetsFile.fileName}")
                             .AppendLine($"Path {assetsFile.originalPath}")
                             .AppendLine($"Type {objectReader.type}")
-                            .AppendLine($"PathID {objectReader.m_PathID}")
+                            .AppendLine($"PathID {objectReader.m_PathID}")   
                             .Append(e);
                         Logger.Error(sb.ToString());
                     }

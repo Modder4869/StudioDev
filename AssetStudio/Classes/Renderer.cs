@@ -239,7 +239,7 @@ namespace AssetStudio
 
                 //SInt16 m_SortingLayer 5.6 and up
                 var m_SortingOrder = reader.ReadInt16();
-                if (reader.Game.Type.IsLoveAndDeepspace() && (reader.serializedType.Match("452B962AFB9E0E6E86A3CB4017CFDB79") || reader.serializedType.Match("0442BB7C00A446761B11FB547EC15733")))
+                if (reader.Game.Type.IsLoveAndDeepspace() && (reader.serializedType.Match("452B962AFB9E0E6E86A3CB4017CFDB79") || reader.serializedType.Match("0442BB7C00A446761B11FB547EC15733")) || reader.serializedType.Match("0442BB7C00A446761B11FB547EC15733"))
                 {
                     var RuntimeVirtualTexture = new PPtr<Object>(reader);
 
