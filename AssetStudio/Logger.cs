@@ -78,6 +78,8 @@ namespace AssetStudio
         }
         public static void Perf(string message)
         {
+            if ((Flags & LoggerEvent.Debug) == 0 || Silent)
+                return;
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine(message);
             Console.ResetColor();
