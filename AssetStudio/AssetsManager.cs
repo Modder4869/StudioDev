@@ -287,7 +287,7 @@ namespace AssetStudio
                 foreach (var file in bundleFile.fileList)
                 {
                     var dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath), file.fileName);
-                    var subReader = new FileReader(dummyPath, file.stream);
+                    var subReader = new FileReader(dummyPath, file.stream, Game);
                     if (subReader.FileType == FileType.AssetsFile)
                     {
                         LoadAssetsFromMemory(subReader, originalPath ?? reader.FullPath, bundleFile.m_Header.unityRevision, originalOffset);

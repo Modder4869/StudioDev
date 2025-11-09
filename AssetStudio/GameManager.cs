@@ -64,6 +64,7 @@ namespace AssetStudio
             Games.Add(index++, new Game(GameType.Metallopus));
             Games.Add(index++, new Game(GameType.EOS));
             Games.Add(index++, new Game(GameType.InfinityKingdom));
+            Games.Add(index++, new Game(GameType.SSTX));
 
         }
 
@@ -210,6 +211,7 @@ namespace AssetStudio
         Metallopus,
         EOS,
         InfinityKingdom,
+        SSTX
     }
 
     public static class GameTypes
@@ -250,6 +252,7 @@ namespace AssetStudio
         public static bool isBLR3(this GameType type) => type == GameType.BLR3;
         public static bool isMetallopus(this GameType type) => type == GameType.Metallopus;
         public static bool isEOS(this GameType type) => type == GameType.EOS;
+        public static bool isSSTX(this GameType type) => type == GameType.SSTX;
 
         public static bool IsGIGroup(this GameType type) => type switch
         {

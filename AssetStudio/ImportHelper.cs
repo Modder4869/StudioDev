@@ -1508,7 +1508,7 @@ namespace AssetStudio
 
 
         }
-    public static FileReader DecryptInfinityKingdom(FileReader reader)
+        public static FileReader DecryptInfinityKingdom(FileReader reader)
         {
             byte[] fileData = reader.ReadBytes((int)reader.Length);
             long fileLength = fileData.Length;
@@ -1652,6 +1652,28 @@ namespace AssetStudio
             ms.Position = 0;
             return new FileReader(reader.FullPath, ms);
 
+        }
+        public static FileReader DecryptSSTX(FileReader reader)
+        {
+            MemoryStream ms = new();
+            var signature = reader.ReadStringToNull();
+            var m_Header = new BundleFile.Header
+            {
+                version = reader.ReadUInt32(),
+                signature = "UnityFS",
+                unityVersion = reader.ReadStringToNull(),
+                unityRevision = reader.ReadStringToNull(),
+                size = reader.ReadInt64() + 16,
+                compressedBlocksInfoSize = reader.ReadUInt32(),
+                uncompressedBlocksInfoSize = reader.ReadUInt32(),
+                flags = (ArchiveFlags)reader.ReadUInt32(),
+            };
+            reader.AlignStream();
+            m_Header.WriteToStream(ms,14);
+            var data = reader.ReadBytes((int)reader.Remaining);
+            ms.Write(data);
+            ms.Position = 0;
+            return new FileReader(reader.FullPath, ms);
         }
     }
 }

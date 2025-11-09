@@ -19,10 +19,17 @@ namespace AssetStudio
         private static readonly byte[] blbMagic = { 0x42, 0x6C, 0x62, 0x02 };
         private static readonly byte[] narakaMagic = { 0x15, 0x1E, 0x1C, 0x0D, 0x0D, 0x23, 0x21 };
         private static readonly byte[] gunfireMagic = { 0x7C, 0x6D, 0x79, 0x72, 0x27, 0x7A, 0x73, 0x78, 0x3F };
-
-
+        public Game Game { get; set; }
         public FileReader(string path) : this(path, File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) { }
+        public FileReader(string path, Stream stream, Game game,bool leaveOpen=false)
+            : base(stream, EndianType.BigEndian, leaveOpen)
+        {
+            FullPath = Path.GetFullPath(path);
+            FileName = Path.GetFileName(path);
+            Game = game;
+            FileType = CheckFileType();
 
+        }
         public FileReader(string path, Stream stream, bool leaveOpen = false) : base(stream, EndianType.BigEndian, leaveOpen)
         {
             FullPath = Path.GetFullPath(path);
@@ -163,10 +170,15 @@ namespace AssetStudio
                 m_DataOffset = ReadInt64();
             }
             Position = 0;
+            if (Game?.Type.isSSTX() ?? false)
+            {
+               if(m_FileSize == (fileSize ^ 0x1024))
+                return true;
+            }
             if (m_FileSize != fileSize)
             {
 
-                Logger.Verbose($"Parsed file size 0x{m_FileSize:X8} does not match stream size {fileSize}, file might be corrupted, aborting...");
+                Logger.Verbose($"Parsed file size 0x{m_FileSize:X8} does not match stream size 0x{fileSize:X8}, file might be corrupted, aborting...");
                 return false;
             }
             if (m_DataOffset > fileSize)
@@ -278,6 +290,9 @@ namespace AssetStudio
                         break;
                     case GameType.InfinityKingdom:
                         reader = DecryptInfinityKingdom(reader);
+                        break;
+                    case GameType.SSTX:
+                        reader = DecryptSSTX(reader);
                         break;
 
                 }

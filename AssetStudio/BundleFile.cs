@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Buffers;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -70,6 +71,27 @@ namespace AssetStudio
                 sb.Append($"uncompressedBlocksInfoSize: 0x{uncompressedBlocksInfoSize:X8} | ");
                 sb.Append($"flags: 0x{(int)flags:X8}");
                 return sb.ToString();
+            }
+            public void WriteToStream(Stream stream, uint Padding = 14)
+            {
+                Span<byte> buffer = stackalloc byte[8];
+                stream.Write(Encoding.UTF8.GetBytes(signature));
+                stream.WriteByte(0);
+                BinaryPrimitives.WriteUInt32BigEndian(buffer, version);
+                stream.Write(buffer[..4]);
+                stream.Write(Encoding.UTF8.GetBytes(unityVersion));
+                stream.WriteByte(0);
+                stream.Write(Encoding.UTF8.GetBytes(unityRevision));
+                stream.WriteByte(0);
+                BinaryPrimitives.WriteInt64BigEndian(buffer, size);
+                stream.Write(buffer);
+                BinaryPrimitives.WriteUInt32BigEndian(buffer, compressedBlocksInfoSize);
+                stream.Write(buffer[..4]);
+                BinaryPrimitives.WriteUInt32BigEndian(buffer, uncompressedBlocksInfoSize);
+                stream.Write(buffer[..4]);
+                BinaryPrimitives.WriteUInt32BigEndian(buffer, (uint)flags);
+                stream.Write(buffer[..4]);
+                stream.Write(new byte[Padding]);
             }
         }
 
@@ -327,12 +349,13 @@ namespace AssetStudio
             Logger.Verbose($"Directory count: {nodesCount}");
             for (int i = 0; i < nodesCount; i++)
             {
-                m_DirectoryInfo.Add(new Node
+                var node = new Node
                 {
                     path = blocksReader.ReadStringToNull(),
                     offset = blocksReader.ReadUInt32(),
                     size = blocksReader.ReadUInt32()
-                });
+                };
+                m_DirectoryInfo.Add(node);
             }
         }
 
@@ -535,17 +558,27 @@ namespace AssetStudio
                     var uncompressedDataHash = blocksInfoReader.ReadBytes(16);
                 }
                 var blocksInfoCount = blocksInfoReader.ReadInt32();
+                if (Game.Type.isSSTX())
+                {
+                    blocksInfoCount ^= 0x1024;
+                }
                 m_BlocksInfo = new List<StorageBlock>();
 
                 Logger.Verbose($"Blocks count: {blocksInfoCount}");
                 for (int i = 0; i < blocksInfoCount; i++)
                 {
-                    m_BlocksInfo.Add(new StorageBlock
+                    var block = new StorageBlock
                     {
                         uncompressedSize = blocksInfoReader.ReadUInt32(),
                         compressedSize = blocksInfoReader.ReadUInt32(),
                         flags = (StorageBlockFlags)blocksInfoReader.ReadUInt16()
-                    });
+                    };
+
+                    if (Game.Type.isSSTX())
+                    {
+                        block.uncompressedSize ^= 0x1024;
+                    }
+                    m_BlocksInfo.Add(block);
 
 
                     Logger.Verbose($"Block {i} Info: {m_BlocksInfo[i]}");
@@ -568,6 +601,10 @@ namespace AssetStudio
                     {
                         node.offset ^= node.size ^ 0x3A6426D4;
                         node.size ^= 0x1BF80687;
+                    }
+                    if (Game.Type.isSSTX())
+                    {
+                        node.size ^= 0x1024;
                     }
                     m_DirectoryInfo.Add(node);
 
