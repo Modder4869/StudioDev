@@ -1669,8 +1669,30 @@ namespace AssetStudio
                 flags = (ArchiveFlags)reader.ReadUInt32(),
             };
             reader.AlignStream();
-            m_Header.WriteToStream(ms,14);
+            m_Header.WriteToStream(ms, 14);
             var data = reader.ReadBytes((int)reader.Remaining);
+            ms.Write(data);
+            ms.Position = 0;
+            return new FileReader(reader.FullPath, ms);
+        }
+        public static FileReader DecryptLATALE(FileReader reader)
+        {
+            byte[] PackToolKey = { 0x61, 0x7C, 0x36, 0x24, 0x09, 0x0A };
+            byte[] DefineKey = { 0x5F, 0x40, 0x7C, 0x0A, 0x74, 0x23 };
+            int[] Indexes = { 48, 167, 264, 558, 567, 1820, 2150, 5549, 12045 };
+
+            var data = reader.ReadBytes((int)reader.Remaining);
+            foreach (int index in Indexes)
+            {
+                if (index < 0 || index >= data.Length)
+                    continue;
+                byte preXor = index >= PackToolKey.Length ? (byte)0x3E : PackToolKey[index % PackToolKey.Length];
+                data[index] ^= preXor;
+                byte[] mainKey = (index & 1) == 0 ? PackToolKey : DefineKey;
+                data[index] ^= mainKey[index % mainKey.Length];
+            }
+
+            MemoryStream ms = new MemoryStream(data);
             ms.Write(data);
             ms.Position = 0;
             return new FileReader(reader.FullPath, ms);

@@ -294,6 +294,9 @@ namespace AssetStudio
                     case GameType.SSTX:
                         reader = DecryptSSTX(reader);
                         break;
+                    case GameType.LATALE:
+                        reader = DecryptLATALE(reader);
+                        break;
 
                 }
             }
