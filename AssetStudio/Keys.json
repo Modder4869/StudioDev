@@ -1,11 +1,26 @@
-[
-  {
+[{
     "Name": "PGR GLB/KR",
     "Key": "6B75726F6B75726F6B75726F6B75726F"
   },
   {
     "Name": "PGR CN/JP/TW",
     "Key": "7935585076714C4F72436F6B57524961"
+  },
+  {
+    "Name": "PGR - NEW",
+    "Key": "587865636F6472506547616B61326536"
+  },
+  {
+    "Name": "MLBB",
+    "Key": "6D676B69697134307A346F6764657079 "
+  },
+  {
+    "Name": "Morimens",
+    "Key": "64313131383539633334346134363765 "
+  },
+  {
+    "Name": "Azur Promilia",
+    "Key": "7a346c32336268352333356826333231 "
   },
   {
     "Name": "Archeland/Kalpa of Universe",
