@@ -50,6 +50,10 @@ namespace AssetStudio
 
         public string Dump()
         {
+            if (this is Mesh m_Mesh)
+            {
+                m_Mesh.ProcessData();
+            }
             if (serializedType?.m_Type != null)
             {
                 return TypeTreeHelper.ReadTypeString(serializedType.m_Type, reader);

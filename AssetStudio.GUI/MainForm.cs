@@ -104,6 +104,9 @@ namespace AssetStudio.GUI
             skipContainer.Checked = Properties.Settings.Default.skipContainer;
             assetsManager.ResolveDependencies = enableResolveDependencies.Checked;
             SkipContainer = Properties.Settings.Default.skipContainer;
+            multiBundle.Checked = Properties.Settings.Default.multiBundle;
+            skipBuildingTree.Checked = Properties.Settings.Default.skipBuildingTree;
+            meshLazyLoad.Checked = Properties.Settings.Default.meshLazyLoad;
             MiHoYoBinData.Encrypted = Properties.Settings.Default.encrypted;
             MiHoYoBinData.Key = Properties.Settings.Default.key;
             AssetsHelper.Minimal = Properties.Settings.Default.minimalAssetMap;
@@ -483,6 +486,12 @@ namespace AssetStudio.GUI
             Properties.Settings.Default.partialLoad = partialLoad.Checked;
             Properties.Settings.Default.Save();
             AssetStudio.AssetsHelper.paritial = partialLoad.Checked;
+        }
+        private void meshLazyLoad_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.meshLazyLoad = meshLazyLoad.Checked;
+            Properties.Settings.Default.Save();
+            AssetStudio.AssetsManager.meshLazyLoad = meshLazyLoad.Checked;
         }
 
         private void enablePreview_Check(object sender, EventArgs e)
@@ -1206,6 +1215,7 @@ namespace AssetStudio.GUI
 
         private void PreviewMesh(Mesh m_Mesh)
         {
+            m_Mesh.ProcessData();
             if (m_Mesh.m_VertexCount > 0)
             {
                 viewMatrixData = Matrix4.CreateRotationY(-(float)Math.PI / 4) * Matrix4.CreateRotationX(-(float)Math.PI / 6);

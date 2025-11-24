@@ -396,7 +396,20 @@ namespace AssetStudio.GUI.Properties {
                 this["skipBuildingTree"] = value;
             }
         }
-
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool meshLazyLoad
+        {
+            get
+            {
+                return ((bool)(this["meshLazyLoad"]));
+            }
+            set
+            {
+                this["meshLazyLoad"] = value;
+            }
+        }
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]

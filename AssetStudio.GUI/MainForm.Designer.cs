@@ -57,6 +57,7 @@ namespace AssetStudio.GUI
             forceLoadBundle = new System.Windows.Forms.ToolStripMenuItem();
             skipContainer = new System.Windows.Forms.ToolStripMenuItem();
             skipBuildingTree = new System.Windows.Forms.ToolStripMenuItem();
+            meshLazyLoad = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             toolStripMenuItem14 = new System.Windows.Forms.ToolStripMenuItem();
             specifyUnityVersion = new System.Windows.Forms.ToolStripTextBox();
@@ -281,7 +282,7 @@ namespace AssetStudio.GUI
             // 
             // optionsToolStripMenuItem
             // 
-            optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { displayAll, multiBundle,toolStripSeparator10, enablePreview, enableModelPreview, modelsOnly, toolStripSeparator11, displayInfo, enableResolveDependencies, allowDuplicates, forceLoadBundle, skipContainer, skipBuildingTree, toolStripSeparator12, toolStripMenuItem14, specifyUnityCNKey, toolStripSeparator13, toolStripMenuItem18, toolStripMenuItem19, showExpOpt });
+            optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { displayAll, multiBundle,toolStripSeparator10, enablePreview, enableModelPreview, modelsOnly, toolStripSeparator11, displayInfo, enableResolveDependencies, allowDuplicates, forceLoadBundle, skipContainer, skipBuildingTree, meshLazyLoad,toolStripSeparator12, toolStripMenuItem14, specifyUnityCNKey, toolStripSeparator13, toolStripMenuItem18, toolStripMenuItem19, showExpOpt });
             optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             optionsToolStripMenuItem.Text = "Options";
@@ -401,7 +402,7 @@ namespace AssetStudio.GUI
             skipContainer.ToolTipText = "Skips the container recovery step.\nImproves loading when dealing with a large number of files.";
             skipContainer.CheckedChanged += skipContainer_CheckedChanged;
             // 
-            // skipContainer
+            // skipBuildingTree
             // 
             skipBuildingTree.CheckOnClick = true;
             skipBuildingTree.Name = "SkipBuildingTree";
@@ -409,6 +410,16 @@ namespace AssetStudio.GUI
             skipBuildingTree.Text = "Skip building tree";
             skipBuildingTree.ToolTipText = "Skips building tree nodes";
             skipBuildingTree.CheckedChanged += SkipBuildingTree_CheckedChanged;
+            // 
+            // 
+            // meshLazyLoad
+            // 
+            meshLazyLoad.CheckOnClick = true;
+            meshLazyLoad.Name = "meshLazyLoad";
+            meshLazyLoad.Size = new System.Drawing.Size(225, 22);
+            meshLazyLoad.Text = "MeshLazyLoad";
+            meshLazyLoad.ToolTipText = "only process mesh on export / preview";
+            meshLazyLoad.CheckedChanged += meshLazyLoad_CheckedChanged;
             // 
             // toolStripSeparator12
             // 
@@ -1625,6 +1636,7 @@ namespace AssetStudio.GUI
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private System.Windows.Forms.ToolStripMenuItem buildMapToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem partialLoad;
+        private System.Windows.Forms.ToolStripMenuItem meshLazyLoad;
         private System.Windows.Forms.ToolStripMenuItem assetBrowserToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
         private System.Windows.Forms.ToolStripMenuItem exportSelectedNodessplitToolStripMenuItem;

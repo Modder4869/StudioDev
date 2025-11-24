@@ -28,6 +28,10 @@ namespace AssetStudio
         internal HashSet<string> noexistFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         internal HashSet<string> assetsFileListHash = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         public bool paritial = false;
+        public static bool meshLazyLoad;
+        Dictionary<string, string[]> searchRootFileCache = new();
+        private static string loadFolder;
+
         public Dictionary<Object, List<long>> PathIDsByObjectCache { get; set; }
         public Dictionary<long, List<long>> PathIdToPptrs { get; set; } = new();
         public void AddPathId(long key, long value)
@@ -75,7 +79,7 @@ namespace AssetStudio
                 Logger.Silent = true;
                 Progress.Silent = true;
             }
-
+            AssetsManager.loadFolder = path;
             MergeSplitAssets(path, true);
             var files = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories).ToList();
             var toReadFile = ProcessingSplitFiles(files);
@@ -184,7 +188,24 @@ namespace AssetStudio
                     break;
             }
         }
+        private string GetSearchRoot(string fullPath)
+        {
+            var dir = Path.GetDirectoryName(fullPath);
 
+            if (dir == null)
+                return null;
+
+            var folderName = new DirectoryInfo(dir).Name;
+
+            // Detect unpack folder (adjust rules here)
+            if( folderName.Contains("_unpacked", StringComparison.OrdinalIgnoreCase))
+            {
+                // use parent folder instead
+                return Directory.GetParent(dir)?.FullName ?? dir;
+            }
+
+            return dir;
+        }
         private void LoadAssetsFile(FileReader reader)
         {
             if (!assetsFileListHash.Contains(reader.FileName))
@@ -196,7 +217,21 @@ namespace AssetStudio
                     CheckStrippedVersion(assetsFile);
                     assetsFileList.Add(assetsFile);
                     assetsFileListHash.Add(assetsFile.fileName);
+                    var searchRoot = GetSearchRoot(AssetsManager.loadFolder ?? reader.FullPath);
+                    if (searchRoot == null)
+                    {
+                        Logger.Verbose("Cannot determine search root, skipping file.");
+                        reader.Dispose();
+                        return;
+                    }
 
+                    // Build CAB-* file cache for this root once
+                    if (!searchRootFileCache.TryGetValue(searchRoot, out var cachedFiles))
+                    {
+                        Logger.Verbose($"Building CAB-* file list for root '{searchRoot}'...");
+                        cachedFiles = Directory.GetFiles(searchRoot, "*", SearchOption.AllDirectories);
+                        searchRootFileCache[searchRoot] = cachedFiles;
+                    }
                     foreach (var sharedFile in assetsFile.m_Externals)
                     {
 
@@ -205,17 +240,20 @@ namespace AssetStudio
 
                         if (!importFilesHash.Contains(sharedFileName))
                         {
+                            var curDir = Path.GetDirectoryName(reader.FullPath);
                             var sharedFilePath = Path.Combine(Path.GetDirectoryName(reader.FullPath), sharedFileName);
                             if (!noexistFiles.Contains(sharedFilePath))
                             {
                                 if (!File.Exists(sharedFilePath))
-                                {
-                                    var findFiles = Directory.GetFiles(Path.GetDirectoryName(reader.FullPath), sharedFileName, SearchOption.AllDirectories);
-                                    if (findFiles.Length > 0)
-                                    {
+                                { 
+                                    var found = cachedFiles.FirstOrDefault(f =>
+                                        string.Equals(Path.GetFileName(f), sharedFileName, StringComparison.OrdinalIgnoreCase));
+                                    sharedFilePath = found;
 
-                                        Logger.Verbose($"Found {findFiles.Length} matching files, picking first file {findFiles[0]} !!");
-                                        sharedFilePath = findFiles[0];
+                                    if (found != null)
+                                    {
+                                        Logger.Verbose($"Using cached result: found {found}");
+                                        sharedFilePath = found;
                                     }
                                 }
                                 if (File.Exists(sharedFilePath))

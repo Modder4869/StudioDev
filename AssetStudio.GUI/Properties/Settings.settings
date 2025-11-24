@@ -11,6 +11,15 @@
 	  <Setting Name="partialLoad" Type="System.Boolean" Scope="User">
 		  <Value Profile="(Default)">False</Value>
 	</Setting>
+  <Setting Name="skipBuildingTree" Type="System.Boolean" Scope="User">
+  <Value Profile="(Default)">False</Value>
+</Setting>
+  <Setting Name="meshLazyLoad" Type="System.Boolean" Scope="User">
+  <Value Profile="(Default)">False</Value>
+</Setting>
+<Setting Name="forceLoadBundle" Type="System.Boolean" Scope="User">
+  <Value Profile="(Default)">False</Value>
+</Setting>
     <Setting Name="enablePreview" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>

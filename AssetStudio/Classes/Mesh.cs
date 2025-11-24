@@ -516,6 +516,7 @@ namespace AssetStudio
         public static bool HasVertexColorSkinning(SerializedType type) => type.Match("413A501B79022BF2DF389A82002FC81F");
 
         public List<uint> m_Indices = new List<uint>();
+        private bool isProcessed;
 
         public Mesh(ObjectReader reader) : base(reader)
         {
@@ -780,12 +781,19 @@ namespace AssetStudio
                 reader.AlignStream();
                 m_StreamData = new StreamingInfo(reader);
             }
+            if (!AssetsManager.meshLazyLoad)
+            {
 
-            ProcessData();
+                ProcessData();
+            }
         }
 
-        private void ProcessData()
+        public void ProcessData()
         {
+            if (isProcessed)
+            {
+                return;
+            }
             if (!string.IsNullOrEmpty(m_StreamData?.path))
             {
                 if (m_VertexData.m_VertexCount > 0)
@@ -810,6 +818,7 @@ namespace AssetStudio
             }
 
             GetTriangles();
+            isProcessed = true;
         }
 
         private void ReadVertexData()

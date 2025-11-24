@@ -168,6 +168,7 @@ namespace AssetStudio.CLI
         public static bool ExportMesh(AssetItem item, string exportPath)
         {
             var m_Mesh = (Mesh)item.Asset;
+            m_Mesh.ProcessData();
             if (m_Mesh.m_VertexCount <= 0)
                 return false;
             if (!TryExportFile(exportPath, item, ".obj", out var exportFullPath))
