@@ -66,6 +66,7 @@ namespace AssetStudio
             Games.Add(index++, new Game(GameType.InfinityKingdom));
             Games.Add(index++, new Game(GameType.SSTX));
             Games.Add(index++, new Game(GameType.LATALE));
+            Games.Add(index++, new Game(GameType.SRU));
 
         }
 
@@ -213,7 +214,8 @@ namespace AssetStudio
         EOS,
         InfinityKingdom,
         SSTX,
-        LATALE
+        LATALE,
+        SRU
     }
 
     public static class GameTypes

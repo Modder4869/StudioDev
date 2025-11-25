@@ -1697,5 +1697,24 @@ namespace AssetStudio
             ms.Position = 0;
             return new FileReader(reader.FullPath, ms);
         }
+        public static FileReader DecryptSRU(FileReader reader)
+        {
+            byte[] key = Convert.FromHexString("F75688A3F53088B472AC09");
+            var data = reader.ReadBytes((int)reader.Remaining);
+            var count = Math.Min(data.Length, 256);
+
+            int keyIndex = data.Length % key.Length;
+            for (int i = 0; i < count; i++)
+            {
+                data[i] ^= key[keyIndex % key.Length];
+                keyIndex++;
+            }
+            MemoryStream ms = new();
+            ms.Write(data);
+            ms.Position = 0;
+            return new FileReader(reader.FullPath, ms);
+
+
+        }
     }
 }
