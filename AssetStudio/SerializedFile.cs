@@ -32,7 +32,40 @@ namespace AssetStudio
         public List<FileIdentifier> m_Externals;
         public List<SerializedType> m_RefTypes;
         public string userInformation;
+        internal BundleBlockCache cache;
+        public static SerializedFileHeader ReadSerializedFileHeader(FileReader reader)
+        {
+            var header = new SerializedFileHeader();
 
+            // Read basic fields
+            header.m_MetadataSize = reader.ReadUInt32();
+            header.m_FileSize = reader.ReadUInt32(); // may be replaced later if large file
+            header.m_Version = (SerializedFileFormatVersion)reader.ReadUInt32();
+            header.m_DataOffset = reader.ReadUInt32();
+
+            // Endianess
+            if (header.m_Version >= SerializedFileFormatVersion.Unknown_9)
+            {
+                header.m_Endianess = reader.ReadByte();
+                header.m_Reserved = reader.ReadBytes(3);
+            }
+            else
+            {
+                reader.Position = header.m_FileSize - header.m_MetadataSize;
+                header.m_Endianess = reader.ReadByte();
+            }
+
+            // Large file support
+            if (header.m_Version >= SerializedFileFormatVersion.LargeFilesSupport)
+            {
+                header.m_MetadataSize = reader.ReadUInt32();
+                header.m_FileSize = reader.ReadInt64();
+                header.m_DataOffset = reader.ReadInt64();
+                reader.ReadInt64(); // unknown
+            }
+
+            return header;
+        }
         public SerializedFile(FileReader reader, AssetsManager assetsManager)
         {
             this.assetsManager = assetsManager;

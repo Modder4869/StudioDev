@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Xml.Linq;
 
 namespace AssetStudio
 {
@@ -34,10 +36,23 @@ namespace AssetStudio
             if (needSearch)
             {
                 var resourceFileName = Path.GetFileName(path);
+       
                 if (assetsFile.assetsManager.resourceFileReaders.TryGetValue(resourceFileName, out reader))
                 {
                     needSearch = false;
                     return reader;
+                }
+                if (AssetsHelper.onDemand)
+                {
+                    var cache = assetsFile.cache;
+                    if (cache != null)
+                    {
+                        var stream = cache.GetRangeStream(offset, size);
+                        reader = new BinaryReader(stream);
+                        //assetsFile.assetsManager.resourceFileReaders.TryAdd(resourceFileName, reader);
+                        return reader;
+
+                    }
                 }
                 var assetsFileDirectory = Path.GetDirectoryName(assetsFile.fullName);
                 var resourceFilePath = Path.Combine(assetsFileDirectory, resourceFileName);
@@ -67,15 +82,37 @@ namespace AssetStudio
         public byte[] GetData()
         {
             var binaryReader = GetReader();
-            binaryReader.BaseStream.Position = offset;
+            if (AssetsHelper.onDemand)//it is new stream each time
+            {
+
+            }
+            else
+            {
+
+                //reader.BaseStream.Position -= 64;
+                binaryReader.BaseStream.Position = offset;
+            }
             return binaryReader.ReadBytes((int)size);
         }
 
         public void GetData(byte[] buff)
         {
             var binaryReader = GetReader();
-            binaryReader.BaseStream.Position = offset;
+            string name= "normal";
+            if (AssetsHelper.onDemand)//it is new stream each time
+            {
+                //binaryReader.BaseStream.Position = offset;
+                name = "onDemand";
+
+            }
+            else
+            {
+
+                //reader.BaseStream.Position -= 64;
+                binaryReader.BaseStream.Position = offset;
+            }
             binaryReader.Read(buff, 0, (int)size);
+            //File.WriteAllBytes($"{name}_resSgf2.bin", buff);
         }
 
         public void WriteData(string path)

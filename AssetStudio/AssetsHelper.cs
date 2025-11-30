@@ -28,6 +28,7 @@ namespace AssetStudio
         private static Dictionary<string, HashSet<long>> Offsets = new Dictionary<string, HashSet<long>>();
         private static AssetsManager assetsManager = new AssetsManager() { Silent = true, SkipProcess = true, ResolveDependencies = false };
         public static bool paritial;
+        public static bool onDemand;
 
         public record Entry
         {

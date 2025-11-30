@@ -114,7 +114,8 @@ namespace AssetStudio.GUI
             loggedEventsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             miscToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             MapNameComboBox = new System.Windows.Forms.ToolStripComboBox();
-            buildMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            buildMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();   
+            onDemand = new System.Windows.Forms.ToolStripMenuItem();
             partialLoad = new System.Windows.Forms.ToolStripMenuItem();
             buildBothToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             buildBothParallelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -314,6 +315,12 @@ namespace AssetStudio.GUI
             partialLoad.ToolTipText = "should make assetmap faster or break it completely!";
             partialLoad.CheckedChanged += partialLoad_CheckedChanged;
             // 
+            onDemand.CheckOnClick = true;
+            onDemand.Name = "onDemand";
+            onDemand.Size = new System.Drawing.Size(225, 22);
+            onDemand.Text = "broken button";
+            onDemand.ToolTipText = "just testing dont use it";
+            onDemand.CheckedChanged += onDemand_CheckedChanged;
             // toolStripSeparator10
             // 
             toolStripSeparator10.Name = "toolStripSeparator10";
@@ -799,7 +806,7 @@ namespace AssetStudio.GUI
             // 
             // miscToolStripMenuItem
             // 
-            miscToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { MapNameComboBox, buildMapToolStripMenuItem, buildBothToolStripMenuItem, buildBothParallelToolStripMenuItem, buildBothParallelTestToolStripMenuItem,clearMapToolStripMenuItem, partialLoad, toolStripSeparator7, assetMapNameTextBox, buildAssetMapToolStripMenuItem, assetExtTextBox, assetMapTypeMenuItem, toolStripSeparator8, loadAIToolStripMenuItem, loadCABMapToolStripMenuItem, assetBrowserToolStripMenuItem });
+            miscToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { MapNameComboBox, buildMapToolStripMenuItem, buildBothToolStripMenuItem, buildBothParallelToolStripMenuItem, buildBothParallelTestToolStripMenuItem,clearMapToolStripMenuItem, partialLoad, onDemand,toolStripSeparator7, assetMapNameTextBox, buildAssetMapToolStripMenuItem, assetExtTextBox, assetMapTypeMenuItem, toolStripSeparator8, loadAIToolStripMenuItem, loadCABMapToolStripMenuItem, assetBrowserToolStripMenuItem });
             miscToolStripMenuItem.Name = "miscToolStripMenuItem";
             miscToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             miscToolStripMenuItem.Text = "Misc.";
@@ -1636,6 +1643,7 @@ namespace AssetStudio.GUI
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private System.Windows.Forms.ToolStripMenuItem buildMapToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem partialLoad;
+        private System.Windows.Forms.ToolStripMenuItem onDemand;
         private System.Windows.Forms.ToolStripMenuItem meshLazyLoad;
         private System.Windows.Forms.ToolStripMenuItem assetBrowserToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
@@ -1658,7 +1666,6 @@ namespace AssetStudio.GUI
         private System.Windows.Forms.ToolStripMenuItem loadCABMapToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem allowDuplicates;
         private System.Windows.Forms.ToolStripMenuItem forceLoadBundle;
-
     }
 }
 

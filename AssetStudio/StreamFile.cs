@@ -7,5 +7,7 @@ namespace AssetStudio
         public string path;
         public string fileName;
         public Stream stream;
+        internal long offset;
+        internal long size;
     }
 }

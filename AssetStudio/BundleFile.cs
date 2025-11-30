@@ -47,7 +47,7 @@ namespace AssetStudio
 
     public class BundleFile
     {
-        private static readonly Regex CabRegex = new(@"^CAB-[A-Fa-f0-9]{32}$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        public static readonly Regex CabRegex = new(@"^CAB-[A-Fa-f0-9]{32}$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         public class Header
         {
             public string signature;
@@ -133,15 +133,15 @@ namespace AssetStudio
         private UnityCN UnityCN;
 
         public Header m_Header;
-        private List<Node> m_DirectoryInfo;
-        private List<StorageBlock> m_BlocksInfo;
+        public List<Node> m_DirectoryInfo;
+        public List<StorageBlock> m_BlocksInfo;
 
         public List<StreamFile> fileList;
 
         private bool HasUncompressedDataHash = true;
         private bool HasBlockInfoNeedPaddingAtStart = true;
 
-        public BundleFile(FileReader reader, Game game, bool partitial = false)
+        public BundleFile(FileReader reader, Game game, bool partitial = false, bool readBlocks = true)
         {
             Game = game;
             m_Header = ReadBundleHeader(reader);
@@ -176,34 +176,49 @@ namespace AssetStudio
                         var m_tmpBLocks = FilterBlocks(m_BlocksInfo, m_DirectoryInfo.Find(e => CabRegex.IsMatch(e.path)));
                         m_BlocksInfo = m_tmpBLocks;
                     }
-                    using (var blocksStream = CreateBlocksStream(reader.FullPath))
+                    if (readBlocks)
                     {
-                        ReadBlocks(reader, blocksStream);
-                        ReadFiles(blocksStream, reader.FullPath);
+
+                        using (var blocksStream = CreateBlocksStream(reader.FullPath))
+                        {
+                            ReadBlocks(reader, blocksStream);
+                            ReadFiles(blocksStream, reader.FullPath);
+                        }
                     }
                     break;
             }
         }
-        public static List<StorageBlock> FilterBlocks(List<StorageBlock> blocks, Node dirInfo)
+        public static List<StorageBlock> FilterBlocks(List<StorageBlock> blocks, Node dirInfo) {
+            var filtered = new List<StorageBlock>(); long targetSize = dirInfo.size; long accumulated = 0; foreach (var block in blocks) { 
+                if (accumulated + block.uncompressedSize >= targetSize) {
+                    filtered.Add(block); accumulated += block.uncompressedSize; break; 
+                } filtered.Add(block); accumulated += block.uncompressedSize;
+            } return filtered;
+        }
+        public static (List<StorageBlock> filtered, List<StorageBlock> remaining, List<int> filteredIndices, List<int> remainingIndices)
+FilterBlocksWithRemaining(List<StorageBlock> blocks, Node dirInfo)
         {
-            var filtered = new List<StorageBlock>();
-            long targetSize = dirInfo.size;
-            long accumulated = 0;
 
-            foreach (var block in blocks)
+            var filtered = FilterBlocks(blocks, dirInfo);
+
+   
+            var filteredIndices = new HashSet<int>();
+            foreach (var b in filtered)
             {
-                if (accumulated + block.uncompressedSize >= targetSize)
+                filteredIndices.Add(blocks.IndexOf(b));
+            }
+            var remaining = new List<StorageBlock>();
+            var remainingIndices = new List<int>();
+            for (int i = 0; i < blocks.Count; i++)
+            {
+                if (!filteredIndices.Contains(i))
                 {
-                    filtered.Add(block);
-                    accumulated += block.uncompressedSize;
-                    break;
+                    remaining.Add(blocks[i]);
+                    remainingIndices.Add(i);
                 }
-
-                filtered.Add(block);
-                accumulated += block.uncompressedSize;
             }
 
-            return filtered;
+            return (filtered, remaining, filteredIndices.ToList(), remainingIndices);
         }
 
         private Header ReadBundleHeader(FileReader reader)
@@ -305,7 +320,7 @@ namespace AssetStudio
             reader.Position = m_Header.size;
         }
 
-        private Stream CreateBlocksStream(string path)
+        public Stream CreateBlocksStream(string path)
         {
             Stream blocksStream;
             var uncompressedSizeSum = m_BlocksInfo.Sum(x => x.uncompressedSize);
@@ -372,6 +387,8 @@ namespace AssetStudio
                 fileList.Add(file);
                 file.path = node.path;
                 file.fileName = Path.GetFileName(node.path);
+                file.offset = node.offset;
+                file.size = node.size;
                 if (node.size >= int.MaxValue)
                 {
                     /*var memoryMappedFile = MemoryMappedFile.CreateNew(null, entryinfo_size);
@@ -618,7 +635,7 @@ namespace AssetStudio
             }
         }
 
-        private void ReadBlocks(FileReader reader, Stream blocksStream)
+        public void ReadBlocks(FileReader reader, Stream blocksStream,uint initial=0)
         {
 
             Logger.Verbose($"Writing block to blocks stream...");
@@ -766,19 +783,27 @@ namespace AssetStudio
                                 }
                                 int count = Math.Min(32, compressedBytesSpan.Length);
                                 string hex = BitConverter.ToString(compressedBytesSpan.Slice(0, count).ToArray()).Replace("-", "");
-                                Logger.Verbose($"first bytes of block : {hex}");
+                                Logger.Verbose($"first bytes of block compressed[{initial+i}] : {hex}");
                                 var numWrite = LZ4.Instance.Decompress(compressedBytesSpan, uncompressedBytesSpan);
                                 if (numWrite != uncompressedSize)
                                 {
                                     throw new IOException($"Lz4 decompression error, write {numWrite} bytes but expected {uncompressedSize} bytes");
                                 }
+                               
+
                                 blocksStream.Write(uncompressedBytesSpan);
+                                Logger.Verbose($"first bytes of block decompress[{initial + i}] : {Convert.ToHexString(uncompressedBytesSpan.ToArray(), 0, 32)}");
+                                //using (var fs = new FileStream("GF@BS", FileMode.Append, FileAccess.Write, FileShare.None))
+                                //{
+                                //    fs.Write(uncompressedBytesSpan.ToArray(), 0, uncompressedBytes.Length);
+                                //}
                             }
                             finally
                             {
                                 ArrayPool<byte>.Shared.Return(compressedBytes, true);
                                 ArrayPool<byte>.Shared.Return(uncompressedBytes, true);
                             }
+                             
                             break;
                         }
                     case CompressionType.Lz4Inv when Game.Type.IsArknightsEndfield():

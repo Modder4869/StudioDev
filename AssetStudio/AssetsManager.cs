@@ -6,6 +6,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using static AssetStudio.BundleFile;
 using static AssetStudio.ImportHelper;
 
 namespace AssetStudio
@@ -163,7 +164,10 @@ namespace AssetStudio
                     LoadAssetsFile(reader);
                     break;
                 case FileType.BundleFile:
-                    LoadBundleFile(reader);
+                    if (AssetsHelper.onDemand)
+                        LoadBundleFileTEST(reader);
+                    else
+                        LoadBundleFile(reader);
                     break;
                 case FileType.WebFile:
                     LoadWebFile(reader);
@@ -284,7 +288,7 @@ namespace AssetStudio
             }
         }
 
-        private void LoadAssetsFromMemory(FileReader reader, string originalPath, string unityVersion = null, long originalOffset = 0)
+        private SerializedFile LoadAssetsFromMemory(FileReader reader, string originalPath, string unityVersion = null, long originalOffset = 0, BundleBlockCache cache = null)
         {
 
             Logger.Verbose($"Loading asset file {reader.FileName} with version {unityVersion} from {originalPath} at offset 0x{originalOffset:X8}");
@@ -293,6 +297,7 @@ namespace AssetStudio
                 try
                 {
                     var assetsFile = new SerializedFile(reader, this);
+                    assetsFile.cache = cache;
                     assetsFile.originalPath = originalPath;
                     assetsFile.offset = originalOffset;
                     if (!string.IsNullOrEmpty(unityVersion) && assetsFile.header.m_Version < SerializedFileFormatVersion.Unknown_7)
@@ -302,6 +307,7 @@ namespace AssetStudio
                     CheckStrippedVersion(assetsFile);
                     assetsFileList.Add(assetsFile);
                     assetsFileListHash.Add(assetsFile.fileName);
+                    return assetsFile;
                 }
                 catch (Exception e)
                 {
@@ -311,6 +317,8 @@ namespace AssetStudio
             }
             else
                 Logger.Info($"Skipping {originalPath} ({reader.FileName})");
+            return null;
+
         }
 
         private void LoadBundleFile(FileReader reader, string originalPath = null, long originalOffset = 0, bool log = true)
@@ -338,6 +346,82 @@ namespace AssetStudio
                     }
                 }
             }
+            catch (InvalidCastException)
+            {
+                Logger.Error($"Game type mismatch, Expected {nameof(Mr0k)} but got {Game.Name} ({Game.GetType().Name}) !!");
+            }
+            catch (Exception e)
+            {
+                var str = $"Error while reading bundle file {reader.FullPath}";
+                if (originalPath != null)
+                {
+                    str += $" from {Path.GetFileName(originalPath)}";
+                }
+                Logger.Error(str, e);
+            }
+            finally
+            {
+                reader.Dispose();
+            }
+        }
+        public void LoadBundleFileTEST(FileReader reader, string originalPath = null, long originalOffset = 0, bool log = true)
+        {
+            if (!this.Silent && log)
+            {
+                Logger.Info("Loading " + reader.FullPath);
+            }
+            try
+            {
+                var bundleFile = new BundleFilePartial(reader, Game, this.paritial);
+                var originalBlocks = new List<BundleFile.StorageBlock>(bundleFile.m_BlocksInfo);
+                var orignalDir = new List<BundleFile.Node>(bundleFile.m_DirectoryInfo);
+                var cabDir = bundleFile.m_DirectoryInfo.Find(e => BundleFile.CabRegex.IsMatch(e.path));
+                using (var blocksStream = bundleFile.CreateBlocksStream(reader.FullPath))
+                {
+                    var (filteredBlocks, remainingBlocks, filteredIndices, remainingIndices) =
+                        BundleFile.FilterBlocksWithRemaining(bundleFile.m_BlocksInfo, cabDir);
+                    bundleFile.m_BlocksInfo = filteredBlocks;
+                    bundleFile.ReadBlocks(reader, blocksStream);
+                    bundleFile.m_DirectoryInfo = new List<BundleFile.Node> { cabDir };
+                    bundleFile.ReadFiles(blocksStream, reader.FullPath);
+                    bundleFile.m_BlocksInfo = originalBlocks;
+
+
+                    foreach (var file in bundleFile.fileList)
+                    {
+                        var dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath), file.fileName);
+                        var subReader = new FileReader(dummyPath, file.stream, Game);
+
+                        if (subReader.FileType == FileType.AssetsFile)
+                        {
+    
+                            var blockCache = new BundleBlockCache(bundleFile, reader, remainingBlocks, remainingIndices, filteredIndices);
+                            var serializedFile = LoadAssetsFromMemory(subReader,
+                                originalPath ?? reader.FullPath,
+                                bundleFile.m_Header.unityRevision,
+                                originalOffset,
+                                blockCache);
+
+                            var resSBlocks = remainingIndices; 
+                            var resSOffset = 0;
+                            blockCache.SetResSBlocks(resSBlocks, resSOffset);
+                            long totalResSSize = reader.Length - serializedFile.header.m_FileSize;
+                            long filteredBytes = filteredBlocks.Sum(b => b.uncompressedSize);
+                            long assetFileSize = serializedFile.header.m_FileSize;
+                            long overlap = filteredBytes - assetFileSize;
+
+                            if (overlap > 0)
+                            {
+                                blocksStream.Position = blocksStream.Length - overlap;
+                                byte[] overlapBytes = new byte[overlap];
+                                blocksStream.Read(overlapBytes, 0, (int)overlap);
+                                blockCache._firstBlockPrepend = overlapBytes;
+                            }
+                        }
+                    }
+                }
+            }
+
             catch (InvalidCastException)
             {
                 Logger.Error($"Game type mismatch, Expected {nameof(Mr0k)} but got {Game.Name} ({Game.GetType().Name}) !!");

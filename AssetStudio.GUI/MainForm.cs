@@ -487,6 +487,12 @@ namespace AssetStudio.GUI
             Properties.Settings.Default.Save();
             AssetStudio.AssetsHelper.paritial = partialLoad.Checked;
         }
+        private void onDemand_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.onDemand = onDemand.Checked;
+            Properties.Settings.Default.Save();
+            AssetStudio.AssetsHelper.onDemand = onDemand.Checked;
+        }
         private void meshLazyLoad_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.meshLazyLoad = meshLazyLoad.Checked;
