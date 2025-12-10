@@ -38,7 +38,9 @@ namespace AssetStudio.GUI
             loadFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             extractFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            decryptFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             extractFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            DecryptFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             abortStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -217,7 +219,7 @@ namespace AssetStudio.GUI
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { loadFileToolStripMenuItem, loadFolderToolStripMenuItem, toolStripMenuItem1, extractFileToolStripMenuItem, extractFolderToolStripMenuItem, toolStripSeparator6, resetToolStripMenuItem, exportLoadedPathsMenuItem,abortStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { loadFileToolStripMenuItem, loadFolderToolStripMenuItem, toolStripMenuItem1, extractFileToolStripMenuItem, extractFolderToolStripMenuItem, decryptFileToolStripMenuItem,DecryptFolderToolStripMenuItem, toolStripSeparator6, resetToolStripMenuItem, exportLoadedPathsMenuItem,abortStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             fileToolStripMenuItem.Text = "File";
@@ -248,12 +250,27 @@ namespace AssetStudio.GUI
             extractFileToolStripMenuItem.Text = "Extract file";
             extractFileToolStripMenuItem.Click += extractFileToolStripMenuItem_Click;
             // 
+            // 
+            // extractFileToolStripMenuItem
+            // 
+            decryptFileToolStripMenuItem.Name = "decryptFileToolStripMenuItem";
+            decryptFileToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            decryptFileToolStripMenuItem.Text = "Decrypt file";
+            decryptFileToolStripMenuItem.Click += decryptFileToolStripMenuItem_Click;
+            // 
             // extractFolderToolStripMenuItem
             // 
             extractFolderToolStripMenuItem.Name = "extractFolderToolStripMenuItem";
             extractFolderToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             extractFolderToolStripMenuItem.Text = "Extract folder";
             extractFolderToolStripMenuItem.Click += extractFolderToolStripMenuItem_Click;
+            // 
+            // DecryptFolderToolStripMenuItem
+            // 
+            DecryptFolderToolStripMenuItem.Name = "DecryptFolderToolStripMenuItem";
+            DecryptFolderToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            DecryptFolderToolStripMenuItem.Text = "Decrypt folder";
+            DecryptFolderToolStripMenuItem.Click += DecryptFolderToolStripMenuItem_Click;
             // 
             // toolStripSeparator6
             // 
@@ -1558,7 +1575,9 @@ namespace AssetStudio.GUI
         private System.Windows.Forms.ToolStripMenuItem displayInfo;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem extractFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem decryptFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem extractFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem DecryptFolderToolStripMenuItem;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.ToolStripMenuItem showExpOpt;
         private GOHierarchy sceneTreeView;

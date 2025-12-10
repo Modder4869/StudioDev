@@ -1,4 +1,5 @@
-﻿using System;
+﻿using K4os.Compression.LZ4;
+using System;
 using System.Buffers;
 using System.Buffers.Binary;
 using System.Collections.Generic;
@@ -94,7 +95,151 @@ namespace AssetStudio
                 stream.Write(new byte[Padding]);
             }
         }
+        private void WriteRawBlocksInfo(Stream stream)
+        {
+            m_Header.flags = (ArchiveFlags)(((uint)m_Header.flags & ~(uint)ArchiveFlags.CompressionTypeMask) | (uint)CompressionType.Lz4);
+            Span<byte> buffer = stackalloc byte[8];
+            if (HasUncompressedDataHash)
+            {
+                stream.Write(new byte[16]); // placeholder
+            }
+            BinaryPrimitives.WriteInt32BigEndian(buffer, m_BlocksInfo.Count);
+            stream.Write(buffer[..4]);
+            for (int i = 0; i < m_BlocksInfo.Count; i++)
+            {
+                var block = m_BlocksInfo[i];
 
+                BinaryPrimitives.WriteUInt32BigEndian(buffer, block.uncompressedSize);
+                stream.Write(buffer[..4]);
+                BinaryPrimitives.WriteUInt32BigEndian(buffer, block.compressedSize);
+                stream.Write(buffer[..4]);
+                BinaryPrimitives.WriteUInt16BigEndian(buffer, (ushort)block.flags);
+                stream.Write(buffer[..2]);
+            }
+            BinaryPrimitives.WriteInt32BigEndian(buffer, m_DirectoryInfo.Count);
+            stream.Write(buffer[..4]);
+
+            for (int i = 0; i < m_DirectoryInfo.Count; i++)
+            {
+                var node = m_DirectoryInfo[i];
+
+                BinaryPrimitives.WriteInt64BigEndian(buffer, node.offset);
+                stream.Write(buffer);
+                BinaryPrimitives.WriteInt64BigEndian(buffer, node.size);
+                stream.Write(buffer);
+                BinaryPrimitives.WriteUInt32BigEndian(buffer, node.flags);
+                stream.Write(buffer[..4]);
+
+                var pathBytes = Encoding.UTF8.GetBytes(node.path);
+                stream.Write(pathBytes);
+                stream.WriteByte(0);
+            }
+        }
+
+        public void WriteUnityLZ4Archive(Stream archiveStream)
+        {
+            byte[] blocksData = null!;
+            byte[] blocksInfoUncompressed = null!;
+            byte[] blocksInfoCompressed = null!;
+
+            try
+            {
+                using (var blocksMemory = new MemoryStream())
+                {
+                    CompressFilesIntoBlocks(blocksMemory);
+                    blocksData = blocksMemory.ToArray();
+                }
+
+                using (var blocksInfoMemory = new MemoryStream())
+                {
+                    WriteRawBlocksInfo(blocksInfoMemory);
+                    blocksInfoUncompressed = blocksInfoMemory.ToArray();
+                }
+
+                blocksInfoCompressed = new byte[LZ4Codec.MaximumOutputSize(blocksInfoUncompressed.Length)];
+                int compressedLength = LZ4Codec.Encode(
+                    blocksInfoUncompressed, 0, blocksInfoUncompressed.Length,
+                    blocksInfoCompressed, 0, blocksInfoCompressed.Length
+                );
+                Array.Resize(ref blocksInfoCompressed, compressedLength);
+
+                using (var headerBuffer = new MemoryStream())
+                {
+                    m_Header.compressedBlocksInfoSize = (uint)blocksInfoCompressed.Length;
+                    m_Header.uncompressedBlocksInfoSize = (uint)blocksInfoUncompressed.Length;
+                    m_Header.size = 0;
+                    m_Header.WriteToStream(headerBuffer, 14);
+                    long headerSize = headerBuffer.Length;
+                    m_Header.size = headerSize + blocksInfoCompressed.Length + blocksData.Length;
+                }
+
+                archiveStream.Position = 0;
+                m_Header.WriteToStream(archiveStream, 14);
+                archiveStream.Write(blocksInfoCompressed, 0, blocksInfoCompressed.Length);
+                archiveStream.Write(blocksData, 0, blocksData.Length);
+                archiveStream.Position = archiveStream.Length;
+            }
+            finally
+            {
+                if (blocksData != null) Array.Clear(blocksData, 0, blocksData.Length);
+                if (blocksInfoUncompressed != null) Array.Clear(blocksInfoUncompressed, 0, blocksInfoUncompressed.Length);
+                if (blocksInfoCompressed != null) Array.Clear(blocksInfoCompressed, 0, blocksInfoCompressed.Length);
+            }
+        }
+
+
+
+
+
+        private void CompressFilesIntoBlocks(Stream archiveStream)
+        {
+            long currentOffset = archiveStream.Position;
+            using var combinedStream = new MemoryStream();
+            foreach (var file in fileList)
+            {
+                file.stream.Position = 0;
+                file.stream.CopyTo(combinedStream);
+                file.offset = 0; 
+                file.size = (int)file.stream.Length;
+            }
+            combinedStream.Position = 0;
+
+            long totalRead = 0;
+
+            for (int i = 0; i < m_BlocksInfo.Count; i++)
+            {
+                var block = m_BlocksInfo[i];
+                byte[] inputData = new byte[block.uncompressedSize];
+                int read = 0;
+                while (read < inputData.Length)
+                {
+                    int r = combinedStream.Read(inputData, read, inputData.Length - read);
+                    if (r <= 0)
+                        throw new EndOfStreamException("Not enough data to fill block");
+                    read += r;
+                }
+
+                byte[] compressedData = new byte[LZ4Codec.MaximumOutputSize(inputData.Length)];
+                int compressedLength = LZ4Codec.Encode(inputData, 0, inputData.Length, compressedData, 0, compressedData.Length);
+                archiveStream.Write(compressedData, 0, compressedLength);
+
+                block.compressedSize = (uint)compressedLength;
+                block.uncompressedSize = (uint)inputData.Length;
+
+                currentOffset = archiveStream.Position;
+                totalRead += inputData.Length;
+            }
+
+            long offset = archiveStream.Position - combinedStream.Length;
+            foreach (var file in fileList)
+            {
+                file.offset = offset;
+                offset += file.size;
+            }
+
+            if (totalRead != combinedStream.Length)
+                throw new InvalidOperationException("Not all file data was written into blocks");
+        }
         public class StorageBlock
         {
             public uint compressedSize;
@@ -110,7 +255,6 @@ namespace AssetStudio
                 return sb.ToString();
             }
         }
-
         public class Node
         {
             public long offset;
@@ -188,12 +332,17 @@ namespace AssetStudio
                     break;
             }
         }
-        public static List<StorageBlock> FilterBlocks(List<StorageBlock> blocks, Node dirInfo) {
-            var filtered = new List<StorageBlock>(); long targetSize = dirInfo.size; long accumulated = 0; foreach (var block in blocks) { 
-                if (accumulated + block.uncompressedSize >= targetSize) {
-                    filtered.Add(block); accumulated += block.uncompressedSize; break; 
-                } filtered.Add(block); accumulated += block.uncompressedSize;
-            } return filtered;
+        public static List<StorageBlock> FilterBlocks(List<StorageBlock> blocks, Node dirInfo)
+        {
+            var filtered = new List<StorageBlock>(); long targetSize = dirInfo.size; long accumulated = 0; foreach (var block in blocks)
+            {
+                if (accumulated + block.uncompressedSize >= targetSize)
+                {
+                    filtered.Add(block); accumulated += block.uncompressedSize; break;
+                }
+                filtered.Add(block); accumulated += block.uncompressedSize;
+            }
+            return filtered;
         }
         public static (List<StorageBlock> filtered, List<StorageBlock> remaining, List<int> filteredIndices, List<int> remainingIndices)
 FilterBlocksWithRemaining(List<StorageBlock> blocks, Node dirInfo)
@@ -201,7 +350,7 @@ FilterBlocksWithRemaining(List<StorageBlock> blocks, Node dirInfo)
 
             var filtered = FilterBlocks(blocks, dirInfo);
 
-   
+
             var filteredIndices = new HashSet<int>();
             foreach (var b in filtered)
             {
@@ -635,7 +784,7 @@ FilterBlocksWithRemaining(List<StorageBlock> blocks, Node dirInfo)
             }
         }
 
-        public void ReadBlocks(FileReader reader, Stream blocksStream,uint initial=0)
+        public void ReadBlocks(FileReader reader, Stream blocksStream, uint initial = 0)
         {
 
             Logger.Verbose($"Writing block to blocks stream...");
@@ -783,13 +932,13 @@ FilterBlocksWithRemaining(List<StorageBlock> blocks, Node dirInfo)
                                 }
                                 int count = Math.Min(32, compressedBytesSpan.Length);
                                 string hex = BitConverter.ToString(compressedBytesSpan.Slice(0, count).ToArray()).Replace("-", "");
-                                Logger.Verbose($"first bytes of block compressed[{initial+i}] : {hex}");
+                                Logger.Verbose($"first bytes of block compressed[{initial + i}] : {hex}");
                                 var numWrite = LZ4.Instance.Decompress(compressedBytesSpan, uncompressedBytesSpan);
                                 if (numWrite != uncompressedSize)
                                 {
                                     throw new IOException($"Lz4 decompression error, write {numWrite} bytes but expected {uncompressedSize} bytes");
                                 }
-                               
+
 
                                 blocksStream.Write(uncompressedBytesSpan);
                                 Logger.Verbose($"first bytes of block decompress[{initial + i}] : {Convert.ToHexString(uncompressedBytesSpan.ToArray(), 0, 32)}");
@@ -803,7 +952,7 @@ FilterBlocksWithRemaining(List<StorageBlock> blocks, Node dirInfo)
                                 ArrayPool<byte>.Shared.Return(compressedBytes, true);
                                 ArrayPool<byte>.Shared.Return(uncompressedBytes, true);
                             }
-                             
+
                             break;
                         }
                     case CompressionType.Lz4Inv when Game.Type.IsArknightsEndfield():

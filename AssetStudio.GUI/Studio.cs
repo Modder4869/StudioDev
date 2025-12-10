@@ -47,7 +47,21 @@ namespace AssetStudio.GUI
             }
             return extractedCount;
         }
-
+        public static int DecryptFolder(string path, string savePath)
+        {
+            int extractedCount = 0;
+            Progress.Reset();
+            var files = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories);
+            for (int i = 0; i < files.Length; i++)
+            {
+                var file = files[i];
+                var fileOriPath = Path.GetDirectoryName(file);
+                var fileSavePath = fileOriPath.Replace(path, savePath);
+                extractedCount += DecryptFile(file, fileSavePath);
+                Progress.Report(i + 1, files.Length);
+            }
+            return extractedCount;
+        }
         public static int ExtractFile(string[] fileNames, string savePath)
         {
             int extractedCount = 0;
@@ -56,6 +70,20 @@ namespace AssetStudio.GUI
             {
                 var fileName = fileNames[i];
                 extractedCount += ExtractFile(fileName, savePath);
+                Progress.Report(i + 1, fileNames.Length);
+            }
+            return extractedCount;
+        }
+        public static int DecryptFile(string[] fileNames, string savePath)
+        {
+            int extractedCount = 0;
+            Progress.Reset();
+            for (var i = 0; i < fileNames.Length; i++)
+            {
+                var fileName = fileNames[i];
+                extractedCount += DecryptFile(fileName, savePath);
+                assetsManager.Clear();
+                GC.Collect();
                 Progress.Report(i + 1, fileNames.Length);
             }
             return extractedCount;
@@ -78,6 +106,17 @@ namespace AssetStudio.GUI
                 reader.Dispose();
             return extractedCount;
         }
+        public static int DecryptFile(string fileName, string savePath)
+        {
+            int extractedCount = 0;
+
+            using var reader = new FileReader(fileName).PreProcessing(Game);
+            if (reader.FileType == FileType.BundleFile)
+            {
+                extractedCount += DecryptBundleFile(reader, savePath);
+            }
+            return extractedCount ;
+        }
 
         private static int ExtractBundleFile(FileReader reader, string savePath)
         {
@@ -98,6 +137,61 @@ namespace AssetStudio.GUI
             }
             return 0;
         }
+        private static int DecryptBundleFile(FileReader reader, string savePath)
+        {
+            StatusStripUpdate($"Decrypting {reader.FileName} ...");
+
+            try
+            {
+                var bundleFile = new BundleFile(reader, Game);
+
+                // Dispose the reader immediately
+                reader.Dispose();
+
+                if (bundleFile.fileList.Count > 0)
+                {
+                    // Create output file with "-decrypted" suffix
+                    string outputFileName = Path.Combine(
+                        savePath,
+                        Path.GetFileNameWithoutExtension(reader.FileName) + "-decrypted" + Path.GetExtension(reader.FileName)
+                    );
+
+                    // Ensure output directory exists
+                    Directory.CreateDirectory(Path.GetDirectoryName(outputFileName)!);
+
+                    // Write the Unity LZ4 archive and dispose all file streams
+                    using (var outputStream = File.Create(outputFileName))
+                    {
+                        try
+                        {
+                            bundleFile.WriteUnityLZ4Archive(outputStream);
+                        }
+                        finally
+                        {
+                            // Dispose all streams in the file list
+                            foreach (var file in bundleFile.fileList)
+                            {
+                                file.stream?.Dispose();
+                                file.stream = null;
+                            }
+                        }
+                    }
+
+                    // Clear file list to free memory
+                    bundleFile.fileList.Clear();
+
+                    return 1; // Success
+                }
+            }
+            catch (InvalidCastException)
+            {
+                Logger.Error($"Game type mismatch, Expected {nameof(Mr0k)} but got {Game.Name} ({Game.GetType().Name}) !!");
+            }
+
+            return 0; // Nothing decrypted
+        }
+
+
 
         private static int ExtractWebDataFile(FileReader reader, string savePath)
         {

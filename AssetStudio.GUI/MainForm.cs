@@ -264,6 +264,21 @@ namespace AssetStudio.GUI
                 }
             }
         }
+        private async void decryptFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
+            {
+                var saveFolderDialog = new OpenFolderDialog();
+                saveFolderDialog.Title = "Select the save folder";
+                if (saveFolderDialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    var fileNames = openFileDialog1.FileNames;
+                    var savePath = saveFolderDialog.Folder;
+                    var extractedCount = await Task.Run(() => DecryptFile(fileNames, savePath));
+                    StatusStripUpdate($"Finished extracting {extractedCount} files.");
+                }
+            }
+        }
 
         private async void extractFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -277,6 +292,22 @@ namespace AssetStudio.GUI
                     var path = openFolderDialog.Folder;
                     var savePath = saveFolderDialog.Folder;
                     var extractedCount = await Task.Run(() => ExtractFolder(path, savePath));
+                    StatusStripUpdate($"Finished extracting {extractedCount} files.");
+                }
+            }
+        }
+        private async void DecryptFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var openFolderDialog = new OpenFolderDialog();
+            if (openFolderDialog.ShowDialog(this) == DialogResult.OK)
+            {
+                var saveFolderDialog = new OpenFolderDialog();
+                saveFolderDialog.Title = "Select the save folder";
+                if (saveFolderDialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    var path = openFolderDialog.Folder;
+                    var savePath = saveFolderDialog.Folder;
+                    var extractedCount = await Task.Run(() => DecryptFolder(path, savePath));
                     StatusStripUpdate($"Finished extracting {extractedCount} files.");
                 }
             }
