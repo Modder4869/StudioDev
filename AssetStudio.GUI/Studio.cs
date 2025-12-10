@@ -116,8 +116,8 @@ namespace AssetStudio.GUI
                 extractedCount += DecryptBundleFile(reader, savePath);
             }
 
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
+            //GC.WaitForPendingFinalizers();
+            //GC.Collect();
             return extractedCount ;
         }
 
