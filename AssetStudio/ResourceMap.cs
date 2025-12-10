@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime;
+using System.Threading.Tasks;
 
 namespace AssetStudio
 {
@@ -26,9 +28,26 @@ namespace AssetStudio
                     return;
                 }
                 Logger.Info("Loaded !!");
-                GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, true, true);
-                GC.WaitForPendingFinalizers();
-                GC.Collect();
+                _ = Task.Run(() =>
+                {
+                    try
+                    {
+
+                        GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+
+                        GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, true, true);
+
+
+                        GC.WaitForPendingFinalizers();
+
+
+                        GC.Collect();
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Warning($"GC failed: {ex.Message}");
+                    }
+                });
             }
         }
 

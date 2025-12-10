@@ -4,8 +4,10 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Runtime;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using static AssetStudio.BundleFile;
 using static AssetStudio.ImportHelper;
 
@@ -777,9 +779,13 @@ namespace AssetStudio
 
             tokenSource.Dispose();
             tokenSource = new CancellationTokenSource();
+            _ = Task.Run(() =>
+            {
+                GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
 
-            //GC.WaitForPendingFinalizers();
-            //GC.Collect();
+
+                GC.Collect();
+            });
         }
 
         private void ReadAssets()

@@ -10,6 +10,7 @@ using System.Drawing.Text;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -276,6 +277,15 @@ namespace AssetStudio.GUI
                     var savePath = saveFolderDialog.Folder;
                     var extractedCount = await Task.Run(() => DecryptFile(fileNames, savePath));
                     StatusStripUpdate($"Finished extracting {extractedCount} files.");
+
+                    _ = Task.Run(() =>
+                    {
+
+                        GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+
+
+                        GC.Collect();
+                    });
                 }
             }
         }
@@ -309,6 +319,15 @@ namespace AssetStudio.GUI
                     var savePath = saveFolderDialog.Folder;
                     var extractedCount = await Task.Run(() => DecryptFolder(path, savePath));
                     StatusStripUpdate($"Finished extracting {extractedCount} files.");
+
+                    _ = Task.Run(() =>
+                    {
+
+                        GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+
+
+                        GC.Collect();
+                    });
                 }
             }
         }

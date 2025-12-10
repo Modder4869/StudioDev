@@ -83,7 +83,7 @@ namespace AssetStudio.GUI
                 var fileName = fileNames[i];
                 extractedCount += DecryptFile(fileName, savePath);
                 assetsManager.Clear();
-                GC.Collect();
+
                 Progress.Report(i + 1, fileNames.Length);
             }
             return extractedCount;
@@ -115,6 +115,9 @@ namespace AssetStudio.GUI
             {
                 extractedCount += DecryptBundleFile(reader, savePath);
             }
+
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
             return extractedCount ;
         }
 
