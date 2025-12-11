@@ -317,8 +317,20 @@ namespace AssetStudio
                     ReadBlocksInfoAndDirectory(reader);
                     if (partitial || AssetsHelper.paritial)
                     {
-                        var m_tmpBLocks = FilterBlocks(m_BlocksInfo, m_DirectoryInfo.Find(e => CabRegex.IsMatch(e.path)));
-                        m_BlocksInfo = m_tmpBLocks;
+                        var matchedDirs = m_DirectoryInfo.Where(e => CabRegex.IsMatch(e.path)).ToList();
+
+                        List<StorageBlock> m_tmpBlocks;
+
+
+                        if (matchedDirs.Count == 1)
+                        {
+                            m_tmpBlocks = FilterBlocks(m_BlocksInfo, matchedDirs[0]);
+                        }
+                        else
+                        {
+                            m_tmpBlocks = m_BlocksInfo;
+                        }
+
                     }
                     if (readBlocks)
                     {
