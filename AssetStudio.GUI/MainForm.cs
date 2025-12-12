@@ -216,6 +216,19 @@ namespace AssetStudio.GUI
             BuildAssetStructures();
         }
 
+        private async void ForceGC_Click(object sender, EventArgs e)
+        {
+  
+            //random bs 
+
+            GC.Collect(0);
+            GC.Collect(2);
+            GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, true, true);
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+
+        }
+
         private async void loadFile_Click(object sender, EventArgs e)
         {
             openFileDialog1.InitialDirectory = openDirectoryBackup;
@@ -2527,7 +2540,7 @@ RegexOptions.Compiled
         {
             miscToolStripMenuItem.DropDown.Visible = false;
             InvokeUpdate(miscToolStripMenuItem, false);
-
+            AssetsHelper.forceSilent = true;
             var input = MapNameComboBox.Text;
             var selectedText = MapNameComboBox.SelectedText;
             var exportListType = (ExportListType)assetMapTypeMenuItem.DropDownItems.Cast<ToolStripMenuItem>().Select(x => x.Checked ? (int)x.Tag : 0).Sum();
@@ -2573,8 +2586,12 @@ RegexOptions.Compiled
                 //Logger.Info("Scanning for files...");
                 string searchPattern = string.IsNullOrWhiteSpace(Studio.Game.Ext) ? "*.*" : Studio.Game.Ext;
                 Logger.Info($"Scanning for files... {searchPattern}");
-                var files = Directory.GetFiles(openFolderDialog.Folder, searchPattern, SearchOption.AllDirectories).ToArray();
-
+                var files = Directory
+      .GetFiles(openFolderDialog.Folder, searchPattern, SearchOption.AllDirectories)
+      .Select(f => new FileInfo(f))       // Convert to FileInfo to access file size
+      .OrderByDescending(fi => fi.Length)           // Sort ascending by size (use OrderByDescending for largest first)
+      .Select(fi => fi.FullName)          // Get back full file path
+      .ToArray();
                 Logger.Info($"Found {files.Length} files");
 
                 var saveFolderDialog = new OpenFolderDialog();
@@ -2593,7 +2610,7 @@ RegexOptions.Compiled
         {
             miscToolStripMenuItem.DropDown.Visible = false;
             InvokeUpdate(miscToolStripMenuItem, false);
-
+            AssetsHelper.forceSilent = true;
             var input = MapNameComboBox.Text;
             var selectedText = MapNameComboBox.SelectedText;
             var exportListType = (ExportListType)assetMapTypeMenuItem.DropDownItems.Cast<ToolStripMenuItem>().Select(x => x.Checked ? (int)x.Tag : 0).Sum();
@@ -2639,8 +2656,12 @@ RegexOptions.Compiled
                 //Logger.Info("Scanning for files...");
                 string searchPattern = string.IsNullOrWhiteSpace(Studio.Game.Ext) ? "*.*" : Studio.Game.Ext;
                 Logger.Info($"Scanning for files... {searchPattern}");
-                var files = Directory.GetFiles(openFolderDialog.Folder, searchPattern, SearchOption.AllDirectories).ToArray();
-
+                var files = Directory
+.GetFiles(openFolderDialog.Folder, searchPattern, SearchOption.AllDirectories)
+.Select(f => new FileInfo(f))       // Convert to FileInfo to access file size
+.OrderByDescending(fi => fi.Length)           // Sort ascending by size (use OrderByDescending for largest first)
+.Select(fi => fi.FullName)          // Get back full file path
+.ToArray();
                 Logger.Info($"Found {files.Length} files");
 
                 var saveFolderDialog = new OpenFolderDialog();

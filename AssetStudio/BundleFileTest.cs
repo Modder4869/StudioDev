@@ -9,8 +9,8 @@ namespace AssetStudio
 {
     public class BundleFilePartial : BundleFile
     {
-        public BundleFilePartial(FileReader reader, Game game, bool partitial = true)
-      : base(reader, game, partitial: partitial, readBlocks: false)
+        public BundleFilePartial(FileReader reader, Game game, bool partial = true)
+      : base(reader, game, partial: partial, readBlocks: false)
         {
 
         }

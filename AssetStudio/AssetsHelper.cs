@@ -30,6 +30,8 @@ namespace AssetStudio
         public static bool paritial;
         public static bool onDemand;
 
+        public static bool forceSilent { get; set; }
+
         public record Entry
         {
             public string Path { get; set; }
@@ -825,6 +827,8 @@ namespace AssetStudio
             {
                 BuildCABMap(file, ref collision);
                 BuildAssetMap(file, assets, typeFilters, nameFilters, containerFilters);
+                assetsManager.Clear();
+                assetsManager.PathIdToPptrs.Clear();
             }
 
             UpdateContainers(assets, game);

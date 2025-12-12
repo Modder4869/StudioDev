@@ -594,7 +594,10 @@ namespace AssetStudio
                 foreach (var offset in stream.GetOffsets(reader.FullPath))
                 {
                     var name = offset.ToString("X8");
-                    Logger.Info($"Loading Block {name}");
+                    if (!AssetsHelper.forceSilent)
+                    {
+                        Logger.Info($"Loading Block {name}");
+                    }
 
                     var dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath), name);
                     var subReader = new FileReader(dummyPath, stream, true);
@@ -779,13 +782,13 @@ namespace AssetStudio
 
             tokenSource.Dispose();
             tokenSource = new CancellationTokenSource();
-            _ = Task.Run(() =>
-            {
-                GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+            //_ = Task.Run(() =>
+            //{
+            //    GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
 
 
-                GC.Collect();
-            });
+            //    GC.Collect();
+            //});
         }
 
         private void ReadAssets()

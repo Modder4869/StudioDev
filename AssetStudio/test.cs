@@ -84,6 +84,7 @@ namespace AssetStudio
                     sliceStats.Add((slice.Length, localAssets.Count, localCollisions));
                     manager.Clear();
                     manager.assetsFileList.Clear();
+                    manager.PathIdToPptrs.Clear();
                 });
 
             var finalAssets = bag.ToList();
@@ -121,6 +122,10 @@ namespace AssetStudio
     Regex[] containerFilters = null)
         {
             Logger.Info("Building Both in Parallel...");
+            //const long sixteenGB = 1L * 1024 * 1024 * 1024;
+
+            //bool started = GC.TryStartNoGCRegion(sixteenGB);
+
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
             int totalCollisions = 0;
@@ -183,6 +188,8 @@ namespace AssetStudio
 
                     manager.Clear();
                     manager.assetsFileList.Clear();
+                    manager.PathIdToPptrs.Clear();
+
                 });
 
             var finalAssets = bag.ToList();
@@ -204,6 +211,7 @@ namespace AssetStudio
             stopwatch.Stop();
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"BuildBothParallel {mapName} completed in {stopwatch.Elapsed.TotalSeconds:F2} seconds.");
+            //GC.EndNoGCRegion();
             Console.ResetColor();
         }
 

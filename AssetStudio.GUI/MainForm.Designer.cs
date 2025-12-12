@@ -35,6 +35,7 @@ namespace AssetStudio.GUI
             menuStrip1 = new System.Windows.Forms.MenuStrip();
             fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             loadFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            ForceGCStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             loadFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             extractFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -219,7 +220,7 @@ namespace AssetStudio.GUI
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { loadFileToolStripMenuItem, loadFolderToolStripMenuItem, toolStripMenuItem1, extractFileToolStripMenuItem, extractFolderToolStripMenuItem, decryptFileToolStripMenuItem,DecryptFolderToolStripMenuItem, toolStripSeparator6, resetToolStripMenuItem, exportLoadedPathsMenuItem,abortStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { loadFileToolStripMenuItem, loadFolderToolStripMenuItem, toolStripMenuItem1, extractFileToolStripMenuItem, extractFolderToolStripMenuItem, decryptFileToolStripMenuItem,DecryptFolderToolStripMenuItem, toolStripSeparator6, resetToolStripMenuItem, exportLoadedPathsMenuItem,abortStripMenuItem , ForceGCStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             fileToolStripMenuItem.Text = "File";
@@ -230,6 +231,12 @@ namespace AssetStudio.GUI
             loadFileToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             loadFileToolStripMenuItem.Text = "Load file";
             loadFileToolStripMenuItem.Click += loadFile_Click;
+            // 
+            // 
+            ForceGCStripMenuItem.Name = "ForceGCStripMenuItem";
+            ForceGCStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            ForceGCStripMenuItem.Text = "FORCE GC";
+            ForceGCStripMenuItem.Click += ForceGC_Click;
             // 
             // loadFolderToolStripMenuItem
             // 
@@ -1539,6 +1546,7 @@ namespace AssetStudio.GUI
         private System.Windows.Forms.TextBox treeSearch;
         private System.Windows.Forms.TextBox listSearch;
         private System.Windows.Forms.ToolStripMenuItem loadFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ForceGCStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loadFolderToolStripMenuItem;
         private System.Windows.Forms.ListView assetListView;
         private System.Windows.Forms.ColumnHeader columnHeaderName;

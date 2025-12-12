@@ -43,6 +43,10 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<TargetPath>x64\AssetStudio.FBXNative.dll</TargetPath>
 		</ContentWithTargetPath>
+		<ContentWithTargetPath Include="Libraries\oo2core_9_win64.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<TargetPath>oo2core_9_win64.dll</TargetPath>
+		</ContentWithTargetPath>
 	</ItemGroup>
 
 	<ItemGroup>

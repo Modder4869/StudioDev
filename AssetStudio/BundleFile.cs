@@ -44,6 +44,9 @@ namespace AssetStudio
         Zstd = 5,
         Lz4Lit4 = 4,
         Lz4Lit5 = 5,
+        Oodle = 7,
+        OodleHSR = 6,
+        OodleMr0k = 7,
     }
 
     public class BundleFile
@@ -285,7 +288,7 @@ namespace AssetStudio
         private bool HasUncompressedDataHash = true;
         private bool HasBlockInfoNeedPaddingAtStart = true;
 
-        public BundleFile(FileReader reader, Game game, bool partitial = false, bool readBlocks = true)
+        public BundleFile(FileReader reader, Game game, bool partial = false, bool readBlocks = true)
         {
             Game = game;
             m_Header = ReadBundleHeader(reader);
@@ -315,7 +318,7 @@ namespace AssetStudio
                         ReadUnityCN(reader);
                     }
                     ReadBlocksInfoAndDirectory(reader);
-                    if (partitial || AssetsHelper.paritial)
+                    if (partial || AssetsHelper.paritial)
                     {
                         var matchedDirs = m_DirectoryInfo.Where(e => CabRegex.IsMatch(e.path)).ToList();
 
@@ -331,6 +334,8 @@ namespace AssetStudio
                             m_tmpBlocks = m_BlocksInfo;
                         }
 
+                        m_BlocksInfo = m_tmpBlocks;
+                        m_DirectoryInfo = matchedDirs;
                     }
                     if (readBlocks)
                     {
@@ -1053,6 +1058,42 @@ FilterBlocksWithRemaining(List<StorageBlock> blocks, Node dirInfo)
                             }
                             finally
                             {
+                                ArrayPool<byte>.Shared.Return(compressedBytes, true);
+                                ArrayPool<byte>.Shared.Return(uncompressedBytes, true);
+                            }
+                            break;
+                        }
+                    case CompressionType.OodleHSR:
+                    case CompressionType.Oodle:
+                        {
+                            var compressedSize = (int)blockInfo.compressedSize;
+                            var uncompressedSize = (int)blockInfo.uncompressedSize;
+
+                            var compressedBytes = ArrayPool<byte>.Shared.Rent(compressedSize);
+                            var uncompressedBytes = ArrayPool<byte>.Shared.Rent(uncompressedSize);
+                            var compressedBytesSpan = compressedBytes.AsSpan(0, compressedSize);
+                            var uncompressedBytesSpan = uncompressedBytes.AsSpan(0, uncompressedSize);
+
+
+                            try
+                            {
+
+                                reader.Read(compressedBytesSpan);
+                                if (compressionType == CompressionType.OodleMr0k && Mr0kUtils.IsMr0k(compressedBytes))
+                                {
+                                    Logger.Verbose($"Block encrypted with mr0k, decrypting...");
+                                    compressedBytesSpan = Mr0kUtils.Decrypt(compressedBytesSpan, (Mr0k)Game);
+                                }
+                                var numWrite = Oodle.Decompress(compressedBytesSpan, uncompressedBytesSpan);
+                                if (numWrite != uncompressedSize)
+                                {
+                                    throw new IOException($"Lz4 decompression error, write {numWrite} bytes but expected {uncompressedSize} bytes");
+                                }
+
+                            }
+                            finally
+                            {
+                                blocksStream.Write(uncompressedBytesSpan);
                                 ArrayPool<byte>.Shared.Return(compressedBytes, true);
                                 ArrayPool<byte>.Shared.Return(uncompressedBytes, true);
                             }
