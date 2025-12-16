@@ -1,6 +1,7 @@
 ﻿using MessagePack;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using SevenZip;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -31,13 +32,53 @@ namespace AssetStudio
         public static bool onDemand;
 
         public static bool forceSilent { get; set; }
+        public static class EntryCache
+        {
+            private static readonly ConcurrentDictionary<uint, string> _cache = new();
+
+            public static string Get(string value)
+            {
+                if (value == null) return null;
+
+                uint key = CRC.CalculateDigestUTF8(value);
+
+                if (_cache.TryGetValue(key, out var cached))
+                    return cached;
+
+                _cache[key] = value;
+                return value;
+            }
+        }
 
         public record Entry
         {
-            public string Path { get; set; }
-            public long Offset { get; set; }
-            public List<string> Dependencies { get; set; }
+            private string _path;
+            private List<string> _dependencies;
+
+            public string Path
+            {
+                get => _path;
+                init => _path = EntryCache.Get(value);
+            }
+
+            public long Offset { get; init; }
+
+            public List<string> Dependencies
+            {
+                get => _dependencies;
+                init
+                {
+                    if (value == null) { _dependencies = null; return; }
+                    var list = new List<string>(value.Count);
+                    foreach (var s in value)
+                        list.Add(EntryCache.Get(s));
+                    _dependencies = list;
+                }
+            }
         }
+
+
+
 
         public static void SetUnityVersion(string version)
         {
@@ -367,7 +408,6 @@ namespace AssetStudio
                 using var fs = File.OpenRead(path);
                 using var reader = new BinaryReader(fs);
                 ParseCABMap(reader);
-
                 Logger.Verbose($"Initialized CABMap with {CABMap.Count} entries");
                 Logger.Info($"Loaded {mapName} !!");
             }
@@ -379,6 +419,7 @@ namespace AssetStudio
 
             return true;
         }
+       
 
         private static void ParseCABMap(BinaryReader reader)
         {
