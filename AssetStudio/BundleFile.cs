@@ -741,7 +741,7 @@ FilterBlocksWithRemaining(List<StorageBlock> blocks, Node dirInfo)
                     var uncompressedDataHash = blocksInfoReader.ReadBytes(16);
                 }
                 var blocksInfoCount = blocksInfoReader.ReadInt32();
-                if (Game.Type.isSSTX())
+                if (Game.Type.isSSTX() || Game.Type.isDawnOfKingdom())
                 {
                     blocksInfoCount ^= 0x1024;
                 }
@@ -757,7 +757,7 @@ FilterBlocksWithRemaining(List<StorageBlock> blocks, Node dirInfo)
                         flags = (StorageBlockFlags)blocksInfoReader.ReadUInt16()
                     };
 
-                    if (Game.Type.isSSTX())
+                    if (Game.Type.isSSTX()|| Game.Type.isDawnOfKingdom())
                     {
                         block.uncompressedSize ^= 0x1024;
                     }

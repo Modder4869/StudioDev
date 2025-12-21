@@ -1675,6 +1675,29 @@ namespace AssetStudio
             ms.Position = 0;
             return new FileReader(reader.FullPath, ms);
         }
+        public static FileReader DecryptDawnOfKingdom(FileReader reader)
+        {
+            MemoryStream ms = new();
+            var signature = reader.ReadStringToNull();
+            var m_Header = new BundleFile.Header
+            {
+                version = 7,
+                signature = "UnityFS",
+                unityVersion = "5.x.x",
+                unityRevision = "2019.4.0f1",
+                size = reader.ReadInt64()+16,
+                compressedBlocksInfoSize = reader.ReadUInt32(),
+                uncompressedBlocksInfoSize = reader.ReadUInt32(),
+                flags = (ArchiveFlags)reader.ReadUInt32(),
+            };
+            m_Header.WriteToStream(ms, 15);
+            var data = reader.ReadBytes((int)reader.Remaining);
+        
+            ms.Write(data);
+            //File.WriteAllBytes("dawntest.bin", ms.ToArray());
+            ms.Position = 0;
+            return new FileReader(reader.FullPath, ms);
+        }
         public static FileReader DecryptLATALE(FileReader reader)
         {
             byte[] PackToolKey = { 0x61, 0x7C, 0x36, 0x24, 0x09, 0x0A };
