@@ -384,6 +384,11 @@ namespace AssetStudio
 
 
                 //Logger.Info($"found {cab} in {fullpath}");
+
+
+            }
+            return fullpath;
+        }
         public static bool LoadCABMapInternal(string mapName)
         {
             Logger.Info($"Loading {mapName}...");
