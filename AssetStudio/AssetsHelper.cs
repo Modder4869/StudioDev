@@ -375,6 +375,13 @@ namespace AssetStudio
                 }
             }
         }
+        public static string FindPath(string cab)
+        {
+            string fullpath = "";
+            if (CABMap.TryGetValue(cab, out var entry))
+            {
+                fullpath = Path.Combine(BaseFolder, entry.Path);
+
 
         public static bool LoadCABMapInternal(string mapName)
         {

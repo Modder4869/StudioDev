@@ -84,6 +84,14 @@ namespace AssetStudio
             Console.WriteLine(message);
             Console.ResetColor();
         }
+        public static void Warn(string message)
+        {
+            if ((Flags & LoggerEvent.Warning) == 0 || Silent)
+                return;
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(message);
+            Console.ResetColor();
+        }
         public static void Warning(string message)
         {
             if ((Flags & LoggerEvent.Warning) == 0 || Silent)
