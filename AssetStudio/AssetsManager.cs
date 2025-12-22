@@ -84,7 +84,8 @@ namespace AssetStudio
             }
             AssetsManager.loadFolder = path;
             MergeSplitAssets(path, true);
-            var files = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories).ToList();
+            string searchPattern = string.IsNullOrWhiteSpace(Game.Ext) ? "*.*" : Game.Ext;
+            var files = Directory.GetFiles(path, searchPattern, SearchOption.AllDirectories).ToList();
             var toReadFile = ProcessingSplitFiles(files);
             Load(toReadFile);
 
