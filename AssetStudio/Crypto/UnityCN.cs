@@ -149,7 +149,16 @@ namespace AssetStudio
 
             public bool Validate()
             {
-                var bytes = Convert.FromHexString(Key);
+                byte[] bytes;
+                try
+                {
+                    bytes = Convert.FromHexString(Key);
+                }
+                catch (FormatException)
+                {
+                    Logger.Warning($"[UnityCN] {this} has invalid key format, skipping...");
+                    return false;
+                }
                 if (bytes.Length != 0x10)
                 {
                     Logger.Warning($"[UnityCN] {this} has invalid key, size should be 16 bytes, skipping...");
