@@ -383,6 +383,7 @@ namespace AssetStudio
                 fullpath = Path.Combine(BaseFolder, entry.Path);
 
 
+                //Logger.Info($"found {cab} in {fullpath}");
         public static bool LoadCABMapInternal(string mapName)
         {
             Logger.Info($"Loading {mapName}...");
