@@ -303,6 +303,9 @@ namespace AssetStudio
                     case GameType.DawnOfKingdom:
                         reader = DecryptDawnOfKingdom(reader);
                         break;
+                    case GameType.GOZ:
+                        reader = DecryptGOZ(reader);
+                        break;
 
                 }
             }

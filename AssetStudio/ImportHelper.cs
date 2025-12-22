@@ -1685,14 +1685,14 @@ namespace AssetStudio
                 signature = "UnityFS",
                 unityVersion = "5.x.x",
                 unityRevision = "2019.4.0f1",
-                size = reader.ReadInt64()+16,
+                size = reader.ReadInt64() + 16,
                 compressedBlocksInfoSize = reader.ReadUInt32(),
                 uncompressedBlocksInfoSize = reader.ReadUInt32(),
                 flags = (ArchiveFlags)reader.ReadUInt32(),
             };
             m_Header.WriteToStream(ms, 15);
             var data = reader.ReadBytes((int)reader.Remaining);
-        
+
             ms.Write(data);
             //File.WriteAllBytes("dawntest.bin", ms.ToArray());
             ms.Position = 0;
@@ -1738,6 +1738,33 @@ namespace AssetStudio
             return new FileReader(reader.FullPath, ms);
 
 
+        }
+        public static FileReader DecryptGOZ(FileReader reader)
+        {
+            //_key = Convert.FromBase64String("5pvoKUvp2EinvR5C");
+            //_salt = Convert.FromBase64String("Vh6TCcm4sJsO9VpS");
+            //decrypt abc textasset to get final key
+            var key = Convert.FromHexString("DF18C8086D7F9F76374C212DE51B01506760A10D39B89CADBB15A3F5CD026D39");
+            var IV = Convert.FromHexString("FE1A4BA3A9FB1E20A17E816F546C6E8D");
+            var data = reader.ReadBytes((int)reader.Remaining);
+            using var rijndael = new RijndaelManaged
+            {
+                KeySize = 256,
+                BlockSize = 128,
+                Mode = CipherMode.CBC,
+                Padding = PaddingMode.PKCS7,
+                Key = key,
+                IV = IV
+
+            };
+            using var decryptor = rijndael.CreateDecryptor();
+            byte[] decryptedData = decryptor.TransformFinalBlock(data, 0, data.Length);
+
+            var ms = new MemoryStream();
+            ms.Write(decryptedData, 0, decryptedData.Length);
+            ms.Position = 0;
+            //File.WriteAllBytes("GOZ.bin", ms.ToArray());
+            return new FileReader(reader.FullPath, ms);
         }
     }
 }
