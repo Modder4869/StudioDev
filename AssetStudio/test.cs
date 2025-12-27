@@ -238,7 +238,7 @@ namespace AssetStudio
 
         private static void BuildCABMapSlice(string file, List<SerializedFile> assetsFiles, ref int collision)
         {
-            var relativePath = Path.GetRelativePath(Directory.GetCurrentDirectory(), file);
+            var relativePath = Path.GetRelativePath(BaseFolder, file);
 
             foreach (var assetsFile in assetsFiles)
             {
