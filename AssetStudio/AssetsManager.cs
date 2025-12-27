@@ -802,6 +802,7 @@ namespace AssetStudio
             var progressCount = assetsFileList.Sum(x => x.m_Objects.Count);
             int i = 0;
             Progress.Reset();
+            var missing = new HashSet<String>();
             foreach (var assetsFile in assetsFileList)
             {
                 foreach (var external in assetsFile.m_Externals)
@@ -812,11 +813,12 @@ namespace AssetStudio
 
                         if (string.IsNullOrEmpty(path))
                         {
-                            Logger.Warn($"missing dependency {external.fileName} , misc->buildMap to find exact file name");
+                            Logger.Warn($"{Path.GetFileName(assetsFile.originalPath)} missing dependency {external.fileName}");
                         }
                         else
                         {
-                            Logger.Warn($"missing dependency {external.fileName} in {path}");
+                            Logger.Warn($"{Path.GetFileName(assetsFile.originalPath)} missing dependency {external.fileName} in {Path.GetFileName(path)}");
+                            missing.Add(path);
                         }
                     }
                 }
@@ -883,6 +885,9 @@ namespace AssetStudio
                 }
             }
             assetsFileListHash.Clear();
+            File.WriteAllLines("missing_paths.txt", missing);
+            Logger.Warn("missing paths to missing_paths.txt");
+            missing.Clear();
         }
 
         private void ProcessAssets()
