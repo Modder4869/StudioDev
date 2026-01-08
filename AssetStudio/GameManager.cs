@@ -69,6 +69,7 @@ namespace AssetStudio
             Games.Add(index++, new Game(GameType.SRU));
             Games.Add(index++, new Game(GameType.DawnOfKingdom));
             Games.Add(index++, new Game(GameType.GOZ));
+            Games.Add(index++, new Game(GameType.Heartopia));
 
         }
 
@@ -219,7 +220,8 @@ namespace AssetStudio
         LATALE,
         SRU,
         DawnOfKingdom,
-        GOZ
+        GOZ,
+        Heartopia
     }
 
     public static class GameTypes
@@ -264,6 +266,7 @@ namespace AssetStudio
         public static bool isLATALE(this GameType type) => type == GameType.LATALE;
         public static bool isDawnOfKingdom(this GameType type) => type == GameType.DawnOfKingdom;
         public static bool IsGOZ(this GameType type) => type == GameType.GOZ;
+        public static bool IsHeartopia(this GameType type) => type == GameType.Heartopia;
 
         public static bool IsGIGroup(this GameType type) => type switch
         {

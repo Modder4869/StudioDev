@@ -317,6 +317,12 @@ namespace AssetStudio
                     {
                         ReadUnityCN(reader);
                     }
+                    if (game.Type.IsHeartopia())
+                    {
+                        UnityCN.SetKey("3237763848784C497074677577334A6E");
+                        ReadUnityCN(reader);
+                      
+                    }
                     ReadBlocksInfoAndDirectory(reader);
                     if (partial || AssetsHelper.paritial)
                     {
