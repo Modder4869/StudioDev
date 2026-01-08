@@ -48,6 +48,27 @@ namespace AssetStudio
 
         }
 
+        public static bool SetKey(string Key)
+        {
+
+            Logger.Verbose($"Initializing decryptor with key {Key}");
+            try
+            {
+                using var aes = Aes.Create();
+                aes.Mode = CipherMode.ECB;
+                aes.Key = Convert.FromHexString(Key);
+
+                Encryptor = aes.CreateEncryptor();
+
+                Logger.Verbose($"Decryptor initialized !!");
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"[UnityCN] Invalid key !!\n{e.Message}");
+                return false;
+            }
+            return true;
+        }
         public static bool SetKey(Entry entry)
         {
 

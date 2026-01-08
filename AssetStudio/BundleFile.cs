@@ -317,6 +317,12 @@ namespace AssetStudio
                     {
                         ReadUnityCN(reader);
                     }
+                    if (game.Type.IsHeartopia())
+                    {
+                        UnityCN.SetKey("3237763848784C497074677577334A6E");
+                        ReadUnityCN(reader);
+                      
+                    }
                     ReadBlocksInfoAndDirectory(reader);
                     if (partial || AssetsHelper.paritial)
                     {
@@ -928,6 +934,15 @@ FilterBlocksWithRemaining(List<StorageBlock> blocks, Node dirInfo)
 
                                     Logger.Verbose($"Block encrypted with mr0k, decrypting...");
                                     compressedBytesSpan = Mr0kUtils.Decrypt(compressedBytesSpan, (Mr0k)Game);
+                                }
+                                if (Game.Type.IsHeartopia() && ((int)blockInfo.flags & 0x100) != 0)
+                                {
+                                    var new_compressedSize = compressedSize;
+                                    if (compressedSize >= 0x6F)
+                                    {
+                                        new_compressedSize = 0x6F;
+                                    }
+                                    UnityCN.DecryptBlock(compressedBytes, new_compressedSize, i);
                                 }
                                 if (Game.Type.IsUnityCN() && ((int)blockInfo.flags & 0x100) != 0)
                                 {
