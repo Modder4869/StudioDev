@@ -32,6 +32,8 @@ namespace AssetStudio
         public static bool onDemand;
 
         public static bool forceSilent { get; set; }
+        public static BundleFile.TmskHeader TmskHeader { get; internal set; }
+
         public static class EntryCache
         {
             private static readonly ConcurrentDictionary<uint, string> _cache = new();

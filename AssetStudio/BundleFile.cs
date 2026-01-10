@@ -52,6 +52,15 @@ namespace AssetStudio
     public class BundleFile
     {
         public static readonly Regex CabRegex = new(@"^CAB-[A-Fa-f0-9]{32}$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        public class TmskHeader : Header
+        {
+
+            public int c1;
+            public int c2;
+            public long rawFileSize;
+            public int rawCompressedBlockInfoSize;
+            public int rawUncompressedBlockInfoSize;
+        }
         public class Header
         {
             public string signature;
@@ -62,7 +71,7 @@ namespace AssetStudio
             public uint compressedBlocksInfoSize;
             public uint uncompressedBlocksInfoSize;
             public ArchiveFlags flags;
-
+            public TmskHeader extra;
             public override string ToString()
             {
                 var sb = new StringBuilder();
@@ -202,7 +211,7 @@ namespace AssetStudio
             {
                 file.stream.Position = 0;
                 file.stream.CopyTo(combinedStream);
-                file.offset = 0; 
+                file.offset = 0;
                 file.size = (int)file.stream.Length;
             }
             combinedStream.Position = 0;
@@ -763,7 +772,7 @@ FilterBlocksWithRemaining(List<StorageBlock> blocks, Node dirInfo)
                         flags = (StorageBlockFlags)blocksInfoReader.ReadUInt16()
                     };
 
-                    if (Game.Type.isSSTX()|| Game.Type.isDawnOfKingdom())
+                    if (Game.Type.isSSTX() || Game.Type.isDawnOfKingdom())
                     {
                         block.uncompressedSize ^= 0x1024;
                     }
@@ -791,6 +800,13 @@ FilterBlocksWithRemaining(List<StorageBlock> blocks, Node dirInfo)
                         node.offset ^= node.size ^ 0x3A6426D4;
                         node.size ^= 0x1BF80687;
                     }
+                    if (Game.Type.IsTMSK())
+                    {
+                        var tmsk = AssetsHelper.TmskHeader;
+                        var off = node.offset;
+                        node.offset = node.size - tmsk.c1;         
+                        node.size = off - (tmsk.c2 + tmsk.c1);  
+                    }
                     if (Game.Type.isSSTX())
                     {
                         node.size ^= 0x1024;
@@ -803,7 +819,11 @@ FilterBlocksWithRemaining(List<StorageBlock> blocks, Node dirInfo)
             }
             if (HasBlockInfoNeedPaddingAtStart && (m_Header.flags & ArchiveFlags.BlockInfoNeedPaddingAtStart) != 0)
             {
-                reader.AlignStream(16);
+                if (!Game.Type.IsTMSK())
+                {
+                    reader.AlignStream(16);
+                }
+                
             }
         }
 
@@ -948,7 +968,10 @@ FilterBlocksWithRemaining(List<StorageBlock> blocks, Node dirInfo)
                                 {
 
                                     Logger.Verbose($"Decrypting block with UnityCN...");
+
                                     UnityCN.DecryptBlock(compressedBytes, compressedSize, i);
+
+
                                 }
                                 if (Game.Type.IsNetEase() && i == 0)
                                 {

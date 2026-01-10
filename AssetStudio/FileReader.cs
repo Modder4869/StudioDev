@@ -306,6 +306,9 @@ namespace AssetStudio
                     case GameType.GOZ:
                         reader = DecryptGOZ(reader);
                         break;
+                    case GameType.TMSK:
+                        reader = DecryptTMSK(reader);
+                        break;
 
                 }
             }
@@ -337,5 +340,6 @@ namespace AssetStudio
             Logger.Verbose("No preprocessing is needed");
             return reader;
         }
+
     }
 }

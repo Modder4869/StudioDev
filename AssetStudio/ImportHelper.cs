@@ -4,6 +4,7 @@ using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -1766,5 +1767,89 @@ namespace AssetStudio
             //File.WriteAllBytes("GOZ.bin", ms.ToArray());
             return new FileReader(reader.FullPath, ms);
         }
+
+
+        public static FileReader DecryptTMSK(FileReader reader)
+        {
+            var enc = reader.ReadStringToNull();
+
+            if (enc != "TMSK_FS")
+            {
+                reader.Position = 0;
+                return reader;
+            }
+            var count = reader.ReadUInt16();
+            byte[] encryptedBlock = reader.ReadBytes(count * 16);
+            //Console.WriteLine(Convert.ToHexString(encryptedBlock));
+            byte[] key = Convert.FromHexString("60de9576321ecb3247fa3bece8ba36db");
+            byte[] iv = Convert.FromHexString("d289f5ee389567faf70ece21902f72ae");
+
+            byte[] decrypted;
+
+            using (var aes = Aes.Create())
+            {
+                aes.Mode = CipherMode.CBC;
+                aes.Padding = PaddingMode.None;
+                aes.Key = key;
+                aes.IV = iv;
+
+                using (var decryptor = aes.CreateDecryptor())
+                {
+                    decrypted = decryptor.TransformFinalBlock(encryptedBlock, 0, encryptedBlock.Length);
+                }
+            }
+            //Console.WriteLine(Convert.ToHexString(decrypted));
+
+            var m_Header = new BundleFile.Header
+            {
+                version = 7,
+                signature = "UnityFS",
+                unityVersion = "5.x.x",
+                unityRevision = "2019.4.32t1",
+                size = 0,
+                compressedBlocksInfoSize = 0,
+                uncompressedBlocksInfoSize = 0,
+                flags =0,
+            };
+            using (MemoryStream ms = new MemoryStream(decrypted))
+            using (var br = new EndianBinaryReader(ms,endian:EndianType.BigEndian))
+            {
+                var sign = br.ReadStringToNull();
+                var ver = br.ReadInt32();
+                br.ReadStringToNull();
+                br.ReadStringToNull();
+                int c1 = br.ReadInt32();
+                long fileSize = br.ReadInt64();
+                int uncompressedBlockInfoSize = br.ReadInt32();
+                int c2 = br.ReadInt32();
+                int compressedBlockInfoSize = br.ReadInt32();
+
+                fileSize -= c1;
+                uncompressedBlockInfoSize -= c2;
+                compressedBlockInfoSize -= (c2 + c1);
+                m_Header.compressedBlocksInfoSize = (uint)compressedBlockInfoSize;
+                m_Header.uncompressedBlocksInfoSize = (uint)uncompressedBlockInfoSize;
+                m_Header.flags = (ArchiveFlags)br.ReadInt32();
+                m_Header.size = fileSize;
+                var whatever = new TmskHeader();
+                whatever.c1 = c1;
+                whatever.c2 = c2;
+                AssetsHelper.TmskHeader = whatever;
+
+
+            }
+            
+            var ms1 = new MemoryStream();
+            m_Header.WriteToStream(ms1, 14);
+            var unk = reader.ReadBytes(6);
+            byte[] remaining = reader.ReadBytes((int)reader.Remaining);
+            ms1.Write(remaining, 0, remaining.Length);
+
+            ms1.Position = 0;
+            //File.WriteAllBytes("TMSK.bin", ms1.ToArray());
+            return new FileReader(reader.FullPath, ms1);
+
+        }
+
     }
 }

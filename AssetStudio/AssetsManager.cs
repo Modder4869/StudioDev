@@ -85,6 +85,7 @@ namespace AssetStudio
             AssetsManager.loadFolder = path;
             MergeSplitAssets(path, true);
             string searchPattern = string.IsNullOrWhiteSpace(Game.Ext) ? "*.*" : Game.Ext;
+
             var files = Directory.GetFiles(path, searchPattern, SearchOption.AllDirectories).ToList();
             var toReadFile = ProcessingSplitFiles(files);
             Load(toReadFile);
@@ -133,7 +134,6 @@ namespace AssetStudio
             importFiles.Clear();
             importFilesHash.Clear();
             noexistFiles.Clear();
-            assetsFileListHash.Clear();
             PathIDsByObjectCache = null;
             AssetsHelper.ClearOffsets();
             Logger.Perf($"LoadFiles completed in {stopwatch.Elapsed.TotalSeconds:F2} seconds.");
@@ -143,6 +143,7 @@ namespace AssetStudio
                 ProcessAssets();
             }
             assetsFileListHash.Clear();
+
             Logger.Perf($"ProcessAssets completed in {stopwatch.Elapsed.TotalSeconds:F2} seconds.");
 
         }
@@ -398,7 +399,7 @@ namespace AssetStudio
 
                         if (subReader.FileType == FileType.AssetsFile)
                         {
-    
+
                             var blockCache = new BundleBlockCache(bundleFile, reader, remainingBlocks, remainingIndices, filteredIndices);
                             var serializedFile = LoadAssetsFromMemory(subReader,
                                 originalPath ?? reader.FullPath,
@@ -783,6 +784,7 @@ namespace AssetStudio
             assetsFileIndexCache.Clear();
 
             tokenSource.Dispose();
+            
             tokenSource = new CancellationTokenSource();
             //_ = Task.Run(() =>
             //{

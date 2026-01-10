@@ -70,6 +70,7 @@ namespace AssetStudio
             Games.Add(index++, new Game(GameType.DawnOfKingdom));
             Games.Add(index++, new Game(GameType.GOZ));
             Games.Add(index++, new Game(GameType.Heartopia));
+            Games.Add(index++, new Game(GameType.TMSK));
 
         }
 
@@ -221,7 +222,8 @@ namespace AssetStudio
         SRU,
         DawnOfKingdom,
         GOZ,
-        Heartopia
+        Heartopia,
+        TMSK
     }
 
     public static class GameTypes
@@ -267,6 +269,7 @@ namespace AssetStudio
         public static bool isDawnOfKingdom(this GameType type) => type == GameType.DawnOfKingdom;
         public static bool IsGOZ(this GameType type) => type == GameType.GOZ;
         public static bool IsHeartopia(this GameType type) => type == GameType.Heartopia;
+        public static bool IsTMSK(this GameType type) => type == GameType.TMSK;
 
         public static bool IsGIGroup(this GameType type) => type switch
         {
