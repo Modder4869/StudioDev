@@ -822,8 +822,12 @@ FilterBlocksWithRemaining(List<StorageBlock> blocks, Node dirInfo)
                 if (!Game.Type.IsTMSK())
                 {
                     reader.AlignStream(16);
-                }
-                
+                } 
+            }
+            if (Game.Type.IsUnityCN() && m_Header.unityRevision == "0.0.0" && reader.ReadByte() == 0 && !HasBlockInfoNeedPaddingAtStart)
+            {
+                reader.Position -= 1;
+                reader.AlignStream(16);
             }
         }
 
@@ -966,7 +970,6 @@ FilterBlocksWithRemaining(List<StorageBlock> blocks, Node dirInfo)
                                 }
                                 if (Game.Type.IsUnityCN() && ((int)blockInfo.flags & 0x100) != 0)
                                 {
-
                                     Logger.Verbose($"Decrypting block with UnityCN...");
 
                                     UnityCN.DecryptBlock(compressedBytes, compressedSize, i);

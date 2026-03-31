@@ -7,6 +7,7 @@ namespace AssetStudio
     public class UnityCN
     {
         private const string Signature = "#$unity3dchina!@";
+        private const string Signature2 = "#$manjuuunity*!@";
 
         private static ICryptoTransform Encryptor;
 
@@ -30,7 +31,7 @@ namespace AssetStudio
             var str = Encoding.UTF8.GetString(signatureBytes);
 
             Logger.Verbose($"Decrypted signature is {str}");
-            if (str != Signature)
+            if (str != Signature && str != Signature2)
             {
                 throw new Exception($"Invalid Signature, Expected {Signature} but found {str} instead");
             }
