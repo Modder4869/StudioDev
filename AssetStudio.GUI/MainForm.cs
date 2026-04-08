@@ -83,7 +83,7 @@ namespace AssetStudio.GUI
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
             InitializeComponent();
-            Text = $"Studio v{Application.ProductVersion} PLEASE LOAD CABMAP AND READ THE GUIDE BEFORE USING STUDIO";
+            Text = $"Studio v{Application.ProductVersion} Click Help!";
             InitializeExportOptions();
             InitializeProgressBar();
             InitializeLogger();
@@ -2197,6 +2197,14 @@ RegexOptions.Compiled
             }
         }
 
+        private async void helpToolStripButton_click(object sender, EventArgs e)
+        {
+            var ps = new ProcessStartInfo("https://gist.github.com/Modder4869/0f5371f8879607eb95b8e63badca227e#tldr")
+            {
+                UseShellExecute = true
+            };
+            Process.Start(ps);
+        }
         private void miscToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
             if (miscToolStripMenuItem.Enabled)

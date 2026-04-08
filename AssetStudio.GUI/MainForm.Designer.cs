@@ -116,6 +116,7 @@ namespace AssetStudio.GUI
             enableFileLogging = new System.Windows.Forms.ToolStripMenuItem();
             loggedEventsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             miscToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            helpToolStripButton = new System.Windows.Forms.ToolStripButton();
             MapNameComboBox = new System.Windows.Forms.ToolStripComboBox();
             buildMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();   
             onDemand = new System.Windows.Forms.ToolStripMenuItem();
@@ -211,7 +212,7 @@ namespace AssetStudio.GUI
             // 
             // menuStrip1
             // 
-            menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { fileToolStripMenuItem, optionsToolStripMenuItem, modelToolStripMenuItem, exportToolStripMenuItem, filterTypeToolStripMenuItem, debugMenuItem, miscToolStripMenuItem });
+            menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { fileToolStripMenuItem, optionsToolStripMenuItem, modelToolStripMenuItem, exportToolStripMenuItem, filterTypeToolStripMenuItem, debugMenuItem, miscToolStripMenuItem, helpToolStripButton });
             menuStrip1.Location = new System.Drawing.Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Size = new System.Drawing.Size(1264, 24);
@@ -835,6 +836,16 @@ namespace AssetStudio.GUI
             miscToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             miscToolStripMenuItem.Text = "Misc.";
             miscToolStripMenuItem.DropDownOpening += miscToolStripMenuItem_DropDownOpening;
+            // 
+            // 
+            // miscToolStripMenuItem
+            // 
+            helpToolStripButton.Name = "miscToolStripMenuItem";
+            helpToolStripButton.Size = new System.Drawing.Size(47, 20);
+            //helpToolStripButton.ToolTipText = "this will open guide webpage in your browser!";
+            helpToolStripButton.Text = "Help";
+            helpToolStripButton.Click += helpToolStripButton_click;
+            helpToolStripButton.AutoToolTip = true;
             // 
             // MapNameComboBox
             // 
@@ -1648,6 +1659,7 @@ namespace AssetStudio.GUI
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem25;
         private System.Windows.Forms.ToolStripMenuItem enableConsole;
         private System.Windows.Forms.ToolStripMenuItem miscToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton helpToolStripButton;
         private System.Windows.Forms.ToolStripMenuItem assetHelpersToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem buildBothToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem buildBothParallelToolStripMenuItem;
