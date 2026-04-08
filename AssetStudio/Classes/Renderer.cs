@@ -123,6 +123,13 @@ namespace AssetStudio
                     {
                         var m_SmallMeshCulling = reader.ReadByte();
                     }
+             
+                    if (version[0] >= 6000 && (version[1] >= 3) && version[3] >=1) {// 6000.3.11f1 and up
+                        reader.AlignStream();
+                        var m_ForceMeshLod = reader.ReadInt16();
+                        reader.AlignStream();
+                        float m_MeshLodSelectionBias = reader.ReadFloat();
+                    }
                     if (reader.Game.Type.IsGI() || reader.Game.Type.IsGICB3() || reader.Game.Type.IsGICB3Pre())
                     {
                         var m_MeshShowQuality = reader.ReadByte();
@@ -239,6 +246,13 @@ namespace AssetStudio
 
                 //SInt16 m_SortingLayer 5.6 and up
                 var m_SortingOrder = reader.ReadInt16();
+                if (version[0] >= 6000 && (version[1] >= 3) && version[3] >= 1)
+                {// 6000.3.11f1 and up
+                    reader.AlignStream();
+
+                        var m_MaskInteraction = reader.ReadInt32();
+                }
+          
                 if (reader.Game.Type.IsLoveAndDeepspace() && (reader.serializedType.Match("452B962AFB9E0E6E86A3CB4017CFDB79") || reader.serializedType.Match("0442BB7C00A446761B11FB547EC15733")) || reader.serializedType.Match("0442BB7C00A446761B11FB547EC15733"))
                 {
                     var RuntimeVirtualTexture = new PPtr<Object>(reader);
