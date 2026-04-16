@@ -309,6 +309,9 @@ namespace AssetStudio
                     case GameType.TMSK:
                         reader = DecryptTMSK(reader);
                         break;
+                    case GameType.TsubasaACE:
+                        reader = DecryptTsubasaACE(reader);
+                        break;
 
                 }
             }

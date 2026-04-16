@@ -71,6 +71,7 @@ namespace AssetStudio
             Games.Add(index++, new Game(GameType.GOZ));
             Games.Add(index++, new Game(GameType.Heartopia));
             Games.Add(index++, new Game(GameType.TMSK));
+            Games.Add(index++, new Game(GameType.TsubasaACE));
 
         }
 
@@ -223,7 +224,8 @@ namespace AssetStudio
         DawnOfKingdom,
         GOZ,
         Heartopia,
-        TMSK
+        TMSK,
+        TsubasaACE
     }
 
     public static class GameTypes
