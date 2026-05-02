@@ -556,10 +556,6 @@ public static class TCTUtils
         {
             throw new NotImplementedException();
         }
-        public override uint[] GetHeaderKey(float seed)
-        {
-            throw new NotImplementedException();
-        }
         public override byte[] GetMetadataKey(Span<byte> header)
         {
             throw new NotImplementedException();
