@@ -72,6 +72,8 @@ namespace AssetStudio
             Games.Add(index++, new Game(GameType.Heartopia));
             Games.Add(index++, new Game(GameType.TMSK));
             Games.Add(index++, new Game(GameType.TsubasaACE));
+            Games.Add(index++, new TCTUtils.TFTCN(GameType.TFTCN, TCTCN_SM4Key, TCTCN_SM4IV, TCTCN_ZUCKey, TCTCN_ZUCIV, TCTCN_ChaCha20Constants, TCTCN_ChaCha20Key, TCTCN_ChaCha20IV, TCTCN_HC128Key, TCTCN_HC128IV));
+            Games.Add(index++, new TCTUtils.WildRift(GameType.WildRift, WildRift_SM4Key, WildRift_SM4IV, WildRift_ZUCKey, WildRift_ZUCIV, WildRift_ChaCha20Constants, WildRift_ChaCha20Key, WildRift_ChaCha20IV, WildRift_HC128Key, WildRift_HC128IV));
 
         }
 
@@ -225,7 +227,9 @@ namespace AssetStudio
         GOZ,
         Heartopia,
         TMSK,
-        TsubasaACE
+        TsubasaACE,
+        TFTCN,
+        WildRift
     }
 
     public static class GameTypes
@@ -272,6 +276,13 @@ namespace AssetStudio
         public static bool IsGOZ(this GameType type) => type == GameType.GOZ;
         public static bool IsHeartopia(this GameType type) => type == GameType.Heartopia;
         public static bool IsTMSK(this GameType type) => type == GameType.TMSK;
+        public static bool IsWildRift(this GameType type) => type == GameType.WildRift;
+        public static bool IsTFTCN(this GameType type) => type == GameType.TFTCN;
+        public static bool IsTCTGroup(this GameType type) => type switch
+        {
+            GameType.TFTCN or GameType.WildRift => true,
+            _ => false,
+        };
 
         public static bool IsGIGroup(this GameType type) => type switch
         {

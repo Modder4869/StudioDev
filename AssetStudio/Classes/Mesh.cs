@@ -357,6 +357,16 @@ namespace AssetStudio
 
             if (version[0] > 4 || (version[0] == 4 && version[1] >= 3)) //4.3 and up
             {
+                if (reader.Game.Type.IsTCTGroup())
+                {
+                    var isBigIndex = reader.ReadBoolean();
+                    var isCompressed = reader.ReadBoolean();
+                    var m_UseDraco = reader.ReadBoolean();
+                    reader.AlignStream();
+
+                    var compressDataCount = reader.ReadInt32();
+                    var compressData_m_VerticesAABB = new AABB(reader);
+                }
                 int numVerts = reader.ReadInt32();
                 vertices = new List<BlendShapeVertex>();
                 for (int i = 0; i < numVerts; i++)
@@ -483,6 +493,8 @@ namespace AssetStudio
                 vertexCount = reader.ReadUInt32();
                 localAABB = new AABB(reader);
             }
+            var boneTransfer = reader.ReadUInt16Array();
+            reader.AlignStream();
         }
     }
 
@@ -593,6 +605,10 @@ namespace AssetStudio
                     }
                     var m_KeepVertices = reader.ReadBoolean();
                     var m_KeepIndices = reader.ReadBoolean();
+                    if (reader.Game.Type.IsTCTGroup())
+                    {
+                        var m_IsCompressedVertex = reader.ReadBoolean();
+                    }
                     if (reader.Game.Type.IsBH3() && HasVertexColorSkinning(reader.serializedType))
                     {
                         var m_VertexColorSkinning = reader.ReadBoolean();
@@ -609,6 +625,11 @@ namespace AssetStudio
                 {
                     var m_PackSkinDataToUV2UV3 = reader.ReadBoolean();
                     reader.AlignStream();
+                }
+                if (reader.Game.Type.IsTCTGroup())
+                {
+                    var m_UVBound = reader.ReadVector4();
+                    var m_PositionBound = new AABB(reader);
                 }
 
                 //Unity fixed it in 2017.3.1p1 and later versions
@@ -702,6 +723,11 @@ namespace AssetStudio
                 m_CompressedMesh = new CompressedMesh(reader);
             }
 
+            if (reader.Game.Type.IsTCTGroup())
+            {
+                var DracoCompressData = reader.ReadUInt8Array();
+                reader.AlignStream();
+            }
             reader.Position += 24; //AABB m_LocalAABB
 
             if (version[0] < 3 || (version[0] == 3 && version[1] <= 4)) //3.4.2 and earlier

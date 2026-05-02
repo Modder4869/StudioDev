@@ -13,6 +13,7 @@
         MhyFile,
         BlbFile,
         ENCRFile,
-        BlockFile
+        BlockFile,
+        FBAUFile
     }
 }

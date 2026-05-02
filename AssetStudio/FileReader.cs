@@ -59,6 +59,8 @@ namespace AssetStudio
                     return FileType.BlkFile;
                 case "ENCR":
                     return FileType.ENCRFile;
+                case "FBAU":
+                    return FileType.FBAUFile;
                 default:
                     {
 

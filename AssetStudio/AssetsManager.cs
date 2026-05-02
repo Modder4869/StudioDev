@@ -195,6 +195,9 @@ namespace AssetStudio
                 case FileType.MhyFile:
                     LoadMhyFile(reader);
                     break;
+                case FileType.FBAUFile:
+                    LoadFBAUFile(reader);
+                    break;
             }
         }
         private string GetSearchRoot(string fullPath)
@@ -699,6 +702,48 @@ namespace AssetStudio
             catch (Exception e)
             {
                 var str = $"Error while reading mhy file {reader.FullPath}";
+                if (originalPath != null)
+                {
+                    str += $" from {Path.GetFileName(originalPath)}";
+                }
+                Logger.Error(str, e);
+            }
+            finally
+            {
+                reader.Dispose();
+            }
+        }
+        private void LoadFBAUFile(FileReader reader, string originalPath = null, long originalOffset = 0, bool log = true)
+        {
+            if (log)
+            {
+                Logger.Info("Loading " + reader.FullPath);
+            }
+            try
+            {
+                var fbauFile = new FBAUFile(reader, Game);
+                foreach (var file in fbauFile.fileList)
+                {
+                    var dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath), file.fileName);
+                    var subReader = new FileReader(dummyPath, file.stream);
+                    if (subReader.FileType == FileType.AssetsFile)
+                    {
+                        LoadAssetsFromMemory(subReader, originalPath ?? reader.FullPath, fbauFile.m_Header.unityRevision, originalOffset);
+                    }
+                    else
+                    {
+                        Logger.Verbose("Caching resource stream");
+                        resourceFileReaders.TryAdd(file.fileName, subReader); //TODO
+                    }
+                }
+            }
+            catch (InvalidCastException)
+            {
+                Logger.Error($"Game type mismatch!!");
+            }
+            catch (Exception e)
+            {
+                var str = $"Error while reading bundle file {reader.FullPath}";
                 if (originalPath != null)
                 {
                     str += $" from {Path.GetFileName(originalPath)}";
