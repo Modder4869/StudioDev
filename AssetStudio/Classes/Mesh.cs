@@ -493,8 +493,11 @@ namespace AssetStudio
                 vertexCount = reader.ReadUInt32();
                 localAABB = new AABB(reader);
             }
-            var boneTransfer = reader.ReadUInt16Array();
-            reader.AlignStream();
+            if (reader.Game.Type.IsTCTGroup())
+            {
+                var boneTransfer = reader.ReadUInt16Array();
+                reader.AlignStream();
+            }
         }
     }
 

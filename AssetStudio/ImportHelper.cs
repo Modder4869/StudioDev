@@ -1555,7 +1555,6 @@ namespace AssetStudio
             return new FileReader(reader.FullPath, ms);
         }
 
-
         public static FileReader DecryptThreeKingdoms(FileReader reader)
         {
 

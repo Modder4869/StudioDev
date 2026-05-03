@@ -314,6 +314,9 @@ namespace AssetStudio
                     case GameType.TsubasaACE:
                         reader = DecryptTsubasaACE(reader);
                         break;
+                    case GameType.HOTD:
+                        reader = DecryptInfinityKingdom(reader);
+                        break;
 
                 }
             }
