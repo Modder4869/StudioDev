@@ -805,7 +805,7 @@ namespace AssetStudio.GUI
                             continue;
                         }
                         //处理非法文件名
-                        var filename = FixFileName(j.Text);
+                        var filename = FixFileName(j.gameObject.Name);
                         if (node.Parent != null)
                         {
                             filename = Path.Combine(FixFileName(node.Parent.Text), filename);
