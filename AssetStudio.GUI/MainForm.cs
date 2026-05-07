@@ -2393,6 +2393,12 @@ RegexOptions.Compiled
 
                 Studio.Game.Callback?.Invoke(Studio.Game);
             }
+            if (Studio.Game.Type == GameType.LoveAndDeepspaceTest)
+            {
+                Studio.Game.Callback = GameHandler.HandleLoveAndDeepspace; // method matches Action<Game>
+
+                Studio.Game.Callback?.Invoke(Studio.Game);
+            }
             if (Studio.Game.Type.IsUnityCN())
             {
                 UnityCNManager.SetKey(Properties.Settings.Default.selectedUnityCNKey);

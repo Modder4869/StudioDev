@@ -1129,7 +1129,7 @@ namespace AssetStudio
             return new FileReader(reader.FullPath, ms);
         }
 
-        public static FileReader DecryptLoveAndDeepspace(FileReader reader)
+        public static FileReader DecryptLoveAndDeepspace(FileReader reader, Game game)
         {
 
             Logger.Verbose($"Attempting to decrypt file {reader.FileName} with Love And Deepspace encryption");
@@ -1162,7 +1162,8 @@ namespace AssetStudio
 
                     if (headerSize > header.compressedBlocksInfoSize && header.signature == "PapesFS")
                     {
-                        if (IsFixedPath(reader.FullPath, out var relPath))
+                   
+                        if(IsFixedPath(reader, game , out var relPath))
                         {
                             var crc = CRC.CalculateDigestUTF8(relPath);
 
@@ -1197,7 +1198,7 @@ namespace AssetStudio
                 reader.Position = 0;
             }
 
-            if (IsFixedPath(reader.FullPath, out var relativePath))
+            if (IsFixedPath(reader, game, out var relativePath))
             {
                 var crc = CRC.CalculateDigestUTF8(relativePath);
 
@@ -1225,13 +1226,27 @@ namespace AssetStudio
             reader.Position = 0;
             return reader;
 
-            static bool IsFixedPath(string path, out string fixedPath)
+            static bool IsFixedPath(FileReader reader , Game game , out string fixedPath)
             {
                 const string baseFolder = "bundles";
 
-
+                string path = reader.FullPath;
                 Logger.Verbose($"Fixing path before checking...");
                 var dirs = path.Split(Path.DirectorySeparatorChar);
+                if (game.Type == GameType.LoveAndDeepspaceTest)
+                {
+                    var dict = (Dictionary<string, string>)game.Data;
+                    var filename = Path.GetFileName(reader.FullPath);
+                    if (dict.TryGetValue(filename, out var fullPath))
+                    {
+                        string relativePath = fullPath.StartsWith("bundles/")
+                            ? fullPath.Substring("bundles/".Length)
+                            : fullPath;
+                        fixedPath = relativePath;
+                        return true;
+                    }
+
+                }
                 if (dirs.Contains(baseFolder))
                 {
                     var idx = Array.IndexOf(dirs, baseFolder);

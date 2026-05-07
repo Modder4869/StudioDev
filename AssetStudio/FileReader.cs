@@ -264,7 +264,10 @@ namespace AssetStudio
                         reader = DecryptPartyAnimals(reader);
                         break;
                     case GameType.LoveAndDeepspace:
-                        reader = DecryptLoveAndDeepspace(reader);
+                        reader = DecryptLoveAndDeepspace(reader,game);
+                        break;
+                    case GameType.LoveAndDeepspaceTest:
+                        reader = DecryptLoveAndDeepspace(reader,game);
                         break;
                     case GameType.SchoolGirlStrikers:
                         reader = DecryptSchoolGirlStrikers(reader);

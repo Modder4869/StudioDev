@@ -51,6 +51,7 @@ namespace AssetStudio
             Games.Add(index++, new Game(GameType.MuvLuvDimensions));
             Games.Add(index++, new Game(GameType.PartyAnimals));
             Games.Add(index++, new Game(GameType.LoveAndDeepspace));
+            Games.Add(index++, new Game(GameType.LoveAndDeepspaceTest));
             Games.Add(index++, new Game(GameType.SchoolGirlStrikers));
             Games.Add(index++, new Game(GameType.ExAstris));
             Games.Add(index++, new Game(GameType.PerpetualNovelty));
@@ -207,6 +208,7 @@ namespace AssetStudio
         MuvLuvDimensions,
         PartyAnimals,
         LoveAndDeepspace,
+        LoveAndDeepspaceTest,
         SchoolGirlStrikers,
         ExAstris,
         PerpetualNovelty,
@@ -258,7 +260,7 @@ namespace AssetStudio
         public static bool IsOPFP(this GameType type) => type == GameType.OPFP;
         public static bool IsNetEase(this GameType type) => type == GameType.NetEase;
         public static bool IsArknightsEndfield(this GameType type) => type == GameType.ArknightsEndfield;
-        public static bool IsLoveAndDeepspace(this GameType type) => type == GameType.LoveAndDeepspace;
+        public static bool IsLoveAndDeepspace(this GameType type) => type == GameType.LoveAndDeepspace || type == GameType.LoveAndDeepspaceTest;
         public static bool IsExAstris(this GameType type) => type == GameType.ExAstris;
         public static bool IsPerpetualNovelty(this GameType type) => type == GameType.PerpetualNovelty;
         public static bool IsShiningNikki(this GameType type) => type == GameType.ShiningNikki;

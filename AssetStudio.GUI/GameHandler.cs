@@ -76,5 +76,47 @@ namespace AssetStudio.GUI
                 sb.Append(b.ToString("x2"));
             return sb.ToString();
         }
+        public static void HandleLoveAndDeepspace(Game game)
+        {
+            using var openFileDialog = new OpenFileDialog
+            {
+                Filter = "Text files (*.txt)|*.txt|All Files (*.*)|*.*",
+                Title = "Select LAD relative paths file",
+                Multiselect = false
+            };
+
+            if (openFileDialog.ShowDialog() != DialogResult.OK)
+            {
+                Console.WriteLine("No file selected.");
+                return;
+            }
+
+            string filePath = openFileDialog.FileName;
+            if (!File.Exists(filePath))
+            {
+                Console.WriteLine("File not found: " + filePath);
+                return;
+            }
+            var pathMap = new Dictionary<string, string>();
+            var lines = File.ReadAllLines(filePath);
+
+            foreach (var line in lines)
+            {
+                string relativePath = line.Trim();
+                if (string.IsNullOrEmpty(relativePath))
+                    continue;
+
+                string fileName = Path.GetFileName(relativePath);
+
+                if (!pathMap.ContainsKey(fileName))
+                    pathMap[fileName] = relativePath;
+                else
+                    Console.WriteLine($"Duplicate filename ignored: {fileName}");
+            }
+
+            Console.WriteLine($"Loaded {pathMap.Count} unique filenames.");
+            game.Data = pathMap;  
+        }
+
     }
 }
