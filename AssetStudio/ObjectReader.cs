@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿
+using System.IO;
 
 namespace AssetStudio
 {
@@ -35,7 +36,7 @@ namespace AssetStudio
 
             if (Logger.Flags == LoggerEvent.Verbose)
             {
-                Logger.Verbose($"Initialized reader for {type} object with {m_PathID} in file {assetsFile.fileName} !!");
+                //Logger.Verbose($"Initialized reader for {type} object with {m_PathID} in file {assetsFile.fileName} !!");
             }
         }
 
@@ -52,7 +53,7 @@ namespace AssetStudio
         public void Reset()
         {
 
-            Logger.Verbose($"Resetting reader position to object offset 0x{byteStart:X8}...");
+            //Logger.Verbose($"Resetting reader position to object offset 0x{byteStart:X8}...");
             Position = byteStart;
         }
 

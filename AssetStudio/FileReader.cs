@@ -65,7 +65,7 @@ namespace AssetStudio
                     {
 
                         Logger.Verbose("signature does not match any of the supported string signatures, attempting to check bytes signatures");
-                        byte[] magic = ReadBytes(2);
+                        byte[] magic = ReadBytes(8);
                         Position = 0;
 
                         Logger.Verbose($"Parsed signature is {Convert.ToHexString(magic)}");
@@ -74,18 +74,18 @@ namespace AssetStudio
                             return FileType.GZipFile;
                         }
 
-                        Logger.Verbose($"Parsed signature does not match with expected signature {Convert.ToHexString(gzipMagic)}");
+                        //Logger.Verbose($"Parsed signature does not match with expected signature {Convert.ToHexString(gzipMagic)}");
                         Position = 0x20;
                         magic = ReadBytes(6);
                         Position = 0;
 
-                        Logger.Verbose($"Parsed signature is {Convert.ToHexString(magic)}");
+                        //Logger.Verbose($"Parsed signature is {Convert.ToHexString(magic)}");
                         if (brotliMagic.SequenceEqual(magic))
                         {
                             return FileType.BrotliFile;
                         }
 
-                        Logger.Verbose($"Parsed signature does not match with expected signature {Convert.ToHexString(brotliMagic)}");
+                        //Logger.Verbose($"Parsed signature does not match with expected signature {Convert.ToHexString(brotliMagic)}");
                         if (IsSerializedFile())
                         {
                             return FileType.AssetsFile;
@@ -93,46 +93,46 @@ namespace AssetStudio
                         magic = ReadBytes(4);
                         Position = 0;
 
-                        Logger.Verbose($"Parsed signature is {Convert.ToHexString(magic)}");
+                        //Logger.Verbose($"Parsed signature is {Convert.ToHexString(magic)}");
                         if (zipMagic.SequenceEqual(magic) || zipSpannedMagic.SequenceEqual(magic))
                         {
                             return FileType.ZipFile;
                         }
 
-                        Logger.Verbose($"Parsed signature does not match with expected signature {Convert.ToHexString(zipMagic)} or {Convert.ToHexString(zipSpannedMagic)}");
+                        //Logger.Verbose($"Parsed signature does not match with expected signature {Convert.ToHexString(zipMagic)} or {Convert.ToHexString(zipSpannedMagic)}");
                         if (mhy0Magic.SequenceEqual(magic))
                         {
                             return FileType.MhyFile;
                         }
 
-                        Logger.Verbose($"Parsed signature does not match with expected signature {Convert.ToHexString(mhy0Magic)}");
+                        //Logger.Verbose($"Parsed signature does not match with expected signature {Convert.ToHexString(mhy0Magic)}");
                         if (blbMagic.SequenceEqual(magic))
                         {
                             return FileType.BlbFile;
                         }
 
-                        Logger.Verbose($"Parsed signature does not match with expected signature {Convert.ToHexString(mhy0Magic)}");
+                        //Logger.Verbose($"Parsed signature does not match with expected signature {Convert.ToHexString(mhy0Magic)}");
                         magic = ReadBytes(7);
                         Position = 0;
 
-                        Logger.Verbose($"Parsed signature is {Convert.ToHexString(magic)}");
+                        //Logger.Verbose($"Parsed signature is {Convert.ToHexString(magic)}");
                         if (narakaMagic.SequenceEqual(magic))
                         {
                             return FileType.BundleFile;
                         }
 
-                        Logger.Verbose($"Parsed signature does not match with expected signature {Convert.ToHexString(narakaMagic)}");
+                        //Logger.Verbose($"Parsed signature does not match with expected signature {Convert.ToHexString(narakaMagic)}");
                         magic = ReadBytes(9);
                         Position = 0;
 
-                        Logger.Verbose($"Parsed signature is {Convert.ToHexString(magic)}");
+                        //Logger.Verbose($"Parsed signature is {Convert.ToHexString(magic)}");
                         if (gunfireMagic.SequenceEqual(magic))
                         {
                             Position = 0x32;
                             return FileType.BundleFile;
                         }
 
-                        Logger.Verbose($"Parsed signature does not match with expected signature {Convert.ToHexString(gunfireMagic)}");
+                        //Logger.Verbose($"Parsed signature does not match with expected signature {Convert.ToHexString(gunfireMagic)}");
 
                         Logger.Verbose($"Parsed signature does not match any of the supported signatures, assuming resource file");
                         return FileType.ResourceFile;
@@ -143,7 +143,7 @@ namespace AssetStudio
         private bool IsSerializedFile()
         {
 
-            Logger.Verbose($"Attempting to check if the file is serialized file...");
+            //Logger.Verbose($"Attempting to check if the file is serialized file...");
 
             var fileSize = BaseStream.Length;
             if (fileSize < 20)
@@ -351,7 +351,7 @@ namespace AssetStudio
             }
 
 
-            Logger.Verbose("No preprocessing is needed");
+            //Logger.Verbose("No preprocessing is needed");
             return reader;
         }
 

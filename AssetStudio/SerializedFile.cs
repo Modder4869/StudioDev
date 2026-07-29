@@ -146,7 +146,7 @@ namespace AssetStudio
             int typeCount = reader.ReadInt32();
             m_Types = new List<SerializedType>();
 
-            Logger.Verbose($"Found {typeCount} serialized types");
+            //Logger.Verbose($"Found {typeCount} serialized types");
             for (int i = 0; i < typeCount; i++)
             {
                 m_Types.Add(ReadSerializedType(false));
@@ -163,7 +163,7 @@ namespace AssetStudio
             Objects = new List<Object>();
             ObjectsDic = new Dictionary<long, Object>();
 
-            Logger.Verbose($"Found {objectCount} objects");
+            //Logger.Verbose($"Found {objectCount} objects");
             for (int i = 0; i < objectCount; i++)
             {
                 var objectInfo = new ObjectInfo();
@@ -215,7 +215,7 @@ namespace AssetStudio
                     objectInfo.stripped = reader.ReadByte();
                 }
 
-                Logger.Verbose($"Object Info: {objectInfo}");
+                //Logger.Verbose($"Object Info: {objectInfo}");
                 m_Objects.Add(objectInfo);
             }
 
@@ -223,7 +223,7 @@ namespace AssetStudio
             {
                 int scriptCount = reader.ReadInt32();
 
-                Logger.Verbose($"Found {scriptCount} scripts");
+                //Logger.Verbose($"Found {scriptCount} scripts");
                 m_ScriptTypes = new List<LocalSerializedObjectIdentifier>();
                 for (int i = 0; i < scriptCount; i++)
                 {
@@ -239,7 +239,7 @@ namespace AssetStudio
                         m_ScriptType.localIdentifierInFile = reader.ReadInt64();
                     }
 
-                    Logger.Verbose($"Script Info: {m_ScriptType}");
+                    //Logger.Verbose($"Script Info: {m_ScriptType}");
                     m_ScriptTypes.Add(m_ScriptType);
                 }
             }
@@ -247,7 +247,7 @@ namespace AssetStudio
             int externalsCount = reader.ReadInt32();
             m_Externals = new List<FileIdentifier>();
 
-            Logger.Verbose($"Found {externalsCount} externals");
+            //Logger.Verbose($"Found {externalsCount} externals");
             for (int i = 0; i < externalsCount; i++)
             {
                 var m_External = new FileIdentifier();
@@ -263,7 +263,7 @@ namespace AssetStudio
                 m_External.pathName = reader.ReadStringToNull();
                 m_External.fileName = Path.GetFileName(m_External.pathName);
 
-                Logger.Verbose($"External Info: {m_External}");
+                //Logger.Verbose($"External Info: {m_External}");
                 m_Externals.Add(m_External);
             }
 
@@ -272,7 +272,7 @@ namespace AssetStudio
                 int refTypesCount = reader.ReadInt32();
                 m_RefTypes = new List<SerializedType>();
 
-                Logger.Verbose($"Found {refTypesCount} reference types");
+                //Logger.Verbose($"Found {refTypesCount} reference types");
                 for (int i = 0; i < refTypesCount; i++)
                 {
                     m_RefTypes.Add(ReadSerializedType(true));
@@ -302,7 +302,7 @@ namespace AssetStudio
         private SerializedType ReadSerializedType(bool isRefType)
         {
 
-            Logger.Verbose($"Attempting to parse serialized" + (isRefType ? " reference" : " ") + "type");
+            //Logger.Verbose($"Attempting to parse serialized" + (isRefType ? " reference" : " ") + "type");
             var type = new SerializedType();
 
             type.classID = reader.ReadInt32();
@@ -340,7 +340,7 @@ namespace AssetStudio
             if (m_EnableTypeTree)
             {
 
-                Logger.Verbose($"File has type tree enabled !!");
+                //Logger.Verbose($"File has type tree enabled !!");
                 type.m_Type = new TypeTree();
                 type.m_Type.m_Nodes = new List<TypeTreeNode>();
                 if (header.m_Version >= SerializedFileFormatVersion.Unknown_12 || header.m_Version == SerializedFileFormatVersion.Unknown_10)
@@ -367,14 +367,14 @@ namespace AssetStudio
             }
 
 
-            Logger.Verbose($"Serialized type info: {type}");
+            //Logger.Verbose($"Serialized type info: {type}");
             return type;
         }
 
         private void ReadTypeTree(TypeTree m_Type, int level = 0)
         {
 
-            Logger.Verbose($"Attempting to parse type tree...");
+            //Logger.Verbose($"Attempting to parse type tree...");
             var typeTreeNode = new TypeTreeNode();
             m_Type.m_Nodes.Add(typeTreeNode);
             typeTreeNode.m_Level = level;
@@ -403,17 +403,17 @@ namespace AssetStudio
             }
 
 
-            Logger.Verbose($"Type Tree Info: {m_Type}");
+            //Logger.Verbose($"Type Tree Info: {m_Type}");
         }
 
         private void TypeTreeBlobRead(TypeTree m_Type)
         {
 
-            Logger.Verbose($"Attempting to parse blob type tree...");
+            //Logger.Verbose($"Attempting to parse blob type tree...");
             int numberOfNodes = reader.ReadInt32();
             int stringBufferSize = reader.ReadInt32();
 
-            Logger.Verbose($"Found {numberOfNodes} nodes and {stringBufferSize} strings");
+            //Logger.Verbose($"Found {numberOfNodes} nodes and {stringBufferSize} strings");
             for (int i = 0; i < numberOfNodes; i++)
             {
                 var typeTreeNode = new TypeTreeNode();
@@ -444,7 +444,7 @@ namespace AssetStudio
             }
 
 
-            Logger.Verbose($"Type Tree Info: {m_Type}");
+            //Logger.Verbose($"Type Tree Info: {m_Type}");
 
             string ReadString(EndianBinaryReader stringBufferReader, uint value)
             {
@@ -466,7 +466,7 @@ namespace AssetStudio
         public void AddObject(Object obj)
         {
 
-            Logger.Verbose($"Caching object with {obj.m_PathID} in file {fileName}...");
+            //Logger.Verbose($"Caching object with {obj.m_PathID} in file {fileName}...");
 
             Objects.Add(obj);
             ObjectsDic.Add(obj.m_PathID, obj);

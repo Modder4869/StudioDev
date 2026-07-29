@@ -105,7 +105,7 @@ namespace AssetStudio
             foreach (var file in files)
             {
 
-                Logger.Verbose($"caching {file} path and name to filter out duplicates");
+                //Logger.Verbose($"caching {file} path and name to filter out duplicates");
                 importFiles.Add(file);
                 importFilesHash.Add(Path.GetFileName(file));
             }
@@ -956,7 +956,7 @@ namespace AssetStudio
                     if (obj is GameObject m_GameObject)
                     {
 
-                        Logger.Verbose($"GameObject with {m_GameObject.m_PathID} in file {m_GameObject.assetsFile.fileName} has {m_GameObject.m_Components.Count} components, Attempting to fetch them...");
+                        //Logger.Verbose($"GameObject with {m_GameObject.m_PathID} in file {m_GameObject.assetsFile.fileName} has {m_GameObject.m_Components.Count} components, Attempting to fetch them...");
                         foreach (var pptr in m_GameObject.m_Components)
                         {
                             if (pptr.TryGet(out var m_Component))
@@ -965,32 +965,32 @@ namespace AssetStudio
                                 {
                                     case Transform m_Transform:
 
-                                        Logger.Verbose($"Fetched Transform component with {m_Transform.m_PathID} in file {m_Transform.assetsFile.fileName}, assigning to GameObject components...");
+                                        //Logger.Verbose($"Fetched Transform component with {m_Transform.m_PathID} in file {m_Transform.assetsFile.fileName}, assigning to GameObject components...");
                                         m_GameObject.m_Transform = m_Transform;
                                         break;
                                     case MeshRenderer m_MeshRenderer:
 
-                                        Logger.Verbose($"Fetched MeshRenderer component with {m_MeshRenderer.m_PathID} in file {m_MeshRenderer.assetsFile.fileName}, assigning to GameObject components...");
+                                        //Logger.Verbose($"Fetched MeshRenderer component with {m_MeshRenderer.m_PathID} in file {m_MeshRenderer.assetsFile.fileName}, assigning to GameObject components...");
                                         m_GameObject.m_MeshRenderer = m_MeshRenderer;
                                         break;
                                     case MeshFilter m_MeshFilter:
 
-                                        Logger.Verbose($"Fetched MeshFilter component with {m_MeshFilter.m_PathID} in file {m_MeshFilter.assetsFile.fileName}, assigning to GameObject components...");
+                                        //Logger.Verbose($"Fetched MeshFilter component with {m_MeshFilter.m_PathID} in file {m_MeshFilter.assetsFile.fileName}, assigning to GameObject components...");
                                         m_GameObject.m_MeshFilter = m_MeshFilter;
                                         break;
                                     case SkinnedMeshRenderer m_SkinnedMeshRenderer:
 
-                                        Logger.Verbose($"Fetched SkinnedMeshRenderer component with {m_SkinnedMeshRenderer.m_PathID} in file {m_SkinnedMeshRenderer.assetsFile.fileName}, assigning to GameObject components...");
+                                        //Logger.Verbose($"Fetched SkinnedMeshRenderer component with {m_SkinnedMeshRenderer.m_PathID} in file {m_SkinnedMeshRenderer.assetsFile.fileName}, assigning to GameObject components...");
                                         m_GameObject.m_SkinnedMeshRenderer = m_SkinnedMeshRenderer;
                                         break;
                                     case Animator m_Animator:
 
-                                        Logger.Verbose($"Fetched Animator component with {m_Animator.m_PathID} in file {m_Animator.assetsFile.fileName}, assigning to GameObject components...");
+                                        //Logger.Verbose($"Fetched Animator component with {m_Animator.m_PathID} in file {m_Animator.assetsFile.fileName}, assigning to GameObject components...");
                                         m_GameObject.m_Animator = m_Animator;
                                         break;
                                     case Animation m_Animation:
 
-                                        Logger.Verbose($"Fetched Animation component with {m_Animation.m_PathID} in file {m_Animation.assetsFile.fileName}, assigning to GameObject components...");
+                                        //Logger.Verbose($"Fetched Animation component with {m_Animation.m_PathID} in file {m_Animation.assetsFile.fileName}, assigning to GameObject components...");
                                         m_GameObject.m_Animation = m_Animation;
                                         break;
                                 }
@@ -1002,7 +1002,7 @@ namespace AssetStudio
                         if (m_SpriteAtlas.m_RenderDataMap.Count > 0)
                         {
 
-                            Logger.Verbose($"SpriteAtlas with {m_SpriteAtlas.m_PathID} in file {m_SpriteAtlas.assetsFile.fileName} has {m_SpriteAtlas.m_PackedSprites.Count} packed sprites, Attempting to fetch them...");
+                            //Logger.Verbose($"SpriteAtlas with {m_SpriteAtlas.m_PathID} in file {m_SpriteAtlas.assetsFile.fileName} has {m_SpriteAtlas.m_PackedSprites.Count} packed sprites, Attempting to fetch them...");
                             foreach (var m_PackedSprite in m_SpriteAtlas.m_PackedSprites)
                             {
                                 if (m_PackedSprite.TryGet(out var m_Sprite))
@@ -1010,7 +1010,7 @@ namespace AssetStudio
                                     if (m_Sprite.m_SpriteAtlas.IsNull)
                                     {
 
-                                        Logger.Verbose($"Fetched Sprite with {m_Sprite.m_PathID} in file {m_Sprite.assetsFile.fileName}, assigning to parent SpriteAtlas...");
+                                        //Logger.Verbose($"Fetched Sprite with {m_Sprite.m_PathID} in file {m_Sprite.assetsFile.fileName}, assigning to parent SpriteAtlas...");
                                         m_Sprite.m_SpriteAtlas.Set(m_SpriteAtlas);
                                     }
                                     else
@@ -1019,7 +1019,7 @@ namespace AssetStudio
                                         if (m_SpriteAtlaOld.m_IsVariant)
                                         {
 
-                                            Logger.Verbose($"Fetched Sprite with {m_Sprite.m_PathID} in file {m_Sprite.assetsFile.fileName} has a variant of the origianl SpriteAtlas, disposing of the variant and assinging to the parent SpriteAtlas...");
+                                            //Logger.Verbose($"Fetched Sprite with {m_Sprite.m_PathID} in file {m_Sprite.assetsFile.fileName} has a variant of the origianl SpriteAtlas, disposing of the variant and assinging to the parent SpriteAtlas...");
                                             m_Sprite.m_SpriteAtlas.Set(m_SpriteAtlas);
                                         }
                                     }
