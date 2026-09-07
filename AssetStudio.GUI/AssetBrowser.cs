@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.HighPerformance.Buffers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -396,14 +397,21 @@ namespace AssetStudio.GUI
         }
         public void Clear()
         {
+            var before = GC.GetTotalMemory(false);
+            Logger.Info($"Before: Entries={_assetEntries.Count()} Memory={before / 1024 / 1024}MB");
+
             ResourceMap.Clear();
             assetDataGridView.Rows.Clear();
             assetDataGridView.Columns.Clear();
             _assetEntries.Clear();
-            Logger.Info($"Total AssetEntries.. {_assetEntries.Count()}");
+            StringPool.Shared.Reset();
+
             GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, true, true);
             GC.WaitForPendingFinalizers();
             GC.Collect();
+
+            var after = GC.GetTotalMemory(true);
+            Logger.Info($"After: Entries={_assetEntries.Count()} Memory={after / 1024 / 1024}MB");
         }
     }
 }

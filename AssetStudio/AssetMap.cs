@@ -5,26 +5,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using CommunityToolkit.HighPerformance.Buffers;
 namespace AssetStudio
 {
-    public static class StringCache
-    {
-        private static readonly ConcurrentDictionary<uint, string> _cache = new ConcurrentDictionary<uint, string>();
-
-        public static string Get(string value)
-        {
-            if (value == null) return null;
-
-            uint key = CRC.CalculateDigestUTF8(value);
-
-            if (_cache.TryGetValue(key, out var cached))
-                return cached;
-
-            _cache[key] = value;
-            return value;
-        }
-    }
-
     [MessagePackObject]
     public record AssetMap
     {
@@ -44,26 +27,22 @@ namespace AssetStudio
         public string Name
         {
             get => _name;
-            set => _name = StringCache.Get(value);
+            set => _name = StringPool.Shared.GetOrAdd(value);
         }
-
         [Key(1)]
         public string Container
         {
             get => _container;
-            set => _container = StringCache.Get(value);
+            set => _container = StringPool.Shared.GetOrAdd(value);
         }
-
         [Key(2)]
         public string Source
         {
             get => _source;
-            set => _source = StringCache.Get(value);
+            set => _source = StringPool.Shared.GetOrAdd(value);
         }
-
         [Key(3)]
         public long PathID { get; set; }
-
         [Key(4)]
         public ClassIDType Type { get; set; }
 
